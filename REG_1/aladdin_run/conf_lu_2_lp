@@ -1,0 +1,13 @@
+partition,cyclic,y_buf,1024,2,1
+partition,cyclic,y,1024,2,1
+partition,cyclic,u_buf,1024,2,1
+partition,cyclic,u,1024,2,1
+partition,cyclic,v_buf,1024,2,1
+partition,cyclic,v,1024,2,1
+partition,cyclic,r,1024,2,1
+partition,cyclic,g,1024,2,1
+partition,cyclic,b,1024,2,1
+partition,cyclic,rgb_buf,1024,2,1
+unrolling,decode_start_f2r_vectorBody_s2e_YuvToRgbExit324,reg_1,2,,
+pipelining,1
+cycle_time,10,,,,

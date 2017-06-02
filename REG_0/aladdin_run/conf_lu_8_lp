@@ -1,0 +1,5 @@
+partition,cyclic,aptr,2048,2,1
+partition,cyclic,aptr.02,2048,2,1
+unrolling,ChenIDct_f2r_vectorBody_s2e_forEnd212,accuracy_loop,8,,
+pipelining,1
+cycle_time,10,,,,

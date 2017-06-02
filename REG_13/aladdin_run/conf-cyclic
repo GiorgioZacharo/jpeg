@@ -1,0 +1,5 @@
+partition,cyclic,.03,1024,4,1
+partition,cyclic,.012,1024,4,1
+unrolling,IQuantize_f2r_forBody_s2e_forEndLoopexit,reg_12,1
+pipelining,0
+cycle_time,10

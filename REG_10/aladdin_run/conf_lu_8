@@ -1,0 +1,7 @@
+partition,cyclic,rgb_buf,1024,2,1
+partition,cyclic,IZigzagMatrix_f2r_forBody_s2e_forEnd.zigzag_index,1024,2,1
+partition,cyclic,.01,1024,2,1
+partition,cyclic,imatrix,1024,2,1
+unrolling,IZigzagMatrix_f2r_forBody_s2e_forEnd,reg_10,8
+pipelining,0,,,,
+cycle_time,10,,,,

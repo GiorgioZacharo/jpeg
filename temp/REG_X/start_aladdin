@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# Env. Variables needed.
+export WORKLOAD=YuvToRgb_f2r_forBody_s2e_forEndLoopexit 
+
+export LLVM_HOME=~giorgio/llvm-3.4/build/
+export TRACER_HOME=~giorgio/LLVM-Tracer/build/

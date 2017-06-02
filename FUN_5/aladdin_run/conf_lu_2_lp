@@ -1,0 +1,4 @@
+partition,complete,mptr.01,2048,4,1
+unrolling,BoundIDctMatrix_f2r_BoundIDctMatrix,fun_05,2,,
+pipelining,1
+cycle_time,10,,,,

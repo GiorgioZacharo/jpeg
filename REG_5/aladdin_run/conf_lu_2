@@ -1,0 +1,10 @@
+partition,cyclic,out_buf,1024,2,1
+partition,complete,p_out_vpos,1024,2,1
+partition,complete,voffs,1024,2,1
+partition,complete,p_out_hpos,1024,2,1
+partition,complete,hoffs,1024,2,1
+partition,cyclic,.13,1024,2,1
+partition,cyclic,.06,1024,2,1
+unrolling,Write4Blocks_f2r_entry_s2e_WriteOneBlockExit,reg_5,2
+pipelining,0,,,,
+cycle_time,10,,,,

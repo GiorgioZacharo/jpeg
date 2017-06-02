@@ -1,0 +1,6 @@
+partition,complete,.14,4096,4,1
+partition,complete,.06,4096,4,1
+partition,complete,out_buf,4096,4,1
+unrolling,WriteOneBlock_f2r_entry_s2e_forEnd13,reg_18,4
+pipelining,0,,,,
+cycle_time,10,,,,

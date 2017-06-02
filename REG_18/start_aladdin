@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# Top Function Target
+export WORKLOAD=WriteOneBlock_f2r_entry_s2e_forEnd13
+
+# Env. Variables needed.
+export LLVM_HOME=~giorgio/llvm-3.4/build/
+export TRACER_HOME=~giorgio/LLVM-Tracer/build/

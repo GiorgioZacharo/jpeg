@@ -1,0 +1,5 @@
+partition,cyclic,.01,1024,2,2
+partition,cyclic,out_buf,1024,2,2
+unrolling,WriteOneBlock_f2r_ifThen7Us_s2e_forCond2ForEnd_crit_edgeUs,reg_17,1
+pipelining,0,,
+cycle_time,10,,

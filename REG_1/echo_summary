@@ -1,0 +1,69 @@
+===============================
+        Aladdin Results        
+===============================
+Running : echo
+Cycle : 129 cycles
+Avg Power: 0.945205 mW
+Idle FU Cycles: 65 cycles
+Avg FU Power: 0.579402 mW
+Avg FU Dynamic Power: 0.519451 mW
+Avg FU leakage Power: 0.0599511 mW
+Avg MEM Power: 0.365802 mW
+Avg MEM Dynamic Power: 0.183427 mW
+Avg MEM Leakage Power: 0.182376 mW
+Total Area: 15914.4 uM^2
+FU Area: 5552.03 uM^2
+MEM Area: 10362.4 uM^2
+Num of Multipliers (32-bit): 1
+Num of Registers (32-bit): 5
+===============================
+        Aladdin Results        
+===============================
+===============================
+        Aladdin Results        
+===============================
+Running : echo
+Cycle : 128 cycles
+Avg Power: 0.955718 mW
+Idle FU Cycles: 64 cycles
+Avg FU Power: 0.588482 mW
+Avg FU Dynamic Power: 0.523233 mW
+Avg FU leakage Power: 0.0652494 mW
+Avg MEM Power: 0.367235 mW
+Avg MEM Dynamic Power: 0.18486 mW
+Avg MEM Leakage Power: 0.182376 mW
+Total Area: 16444.3 uM^2
+FU Area: 6081.86 uM^2
+MEM Area: 10362.4 uM^2
+Num of Multipliers (32-bit): 1
+Num of Adders (32-bit): 1
+Num of Bit-wise Operators (32-bit): 2
+Num of Shifters (32-bit): 1
+Num of Registers (32-bit): 5
+===============================
+        Aladdin Results        
+===============================
+===============================
+        Aladdin Results        
+===============================
+Running : echo
+Cycle : 128 cycles
+Avg Power: 0.955718 mW
+Idle FU Cycles: 64 cycles
+Avg FU Power: 0.588482 mW
+Avg FU Dynamic Power: 0.523233 mW
+Avg FU leakage Power: 0.0652494 mW
+Avg MEM Power: 0.367235 mW
+Avg MEM Dynamic Power: 0.18486 mW
+Avg MEM Leakage Power: 0.182376 mW
+Total Area: 16444.3 uM^2
+FU Area: 6081.86 uM^2
+MEM Area: 10362.4 uM^2
+Num of Multipliers (32-bit): 1
+Num of Adders (32-bit): 1
+Num of Bit-wise Operators (32-bit): 2
+Num of Shifters (32-bit): 1
+Num of Registers (32-bit): 5
+===============================
+        Aladdin Results        
+===============================

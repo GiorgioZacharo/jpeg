@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# Top Function Target
+export WORKLOAD=decode_block_f2r_forBodyI11_s2e_BoundIDctMatrixExit
+
+# Env. Variables needed.
+export LLVM_HOME=~giorgio/llvm-3.4/build/
+export TRACER_HOME=~giorgio/LLVM-Tracer/build/

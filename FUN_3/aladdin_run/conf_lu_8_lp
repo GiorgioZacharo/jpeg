@@ -1,0 +1,8 @@
+partition,complete,p_out_vpos,1024,2,1
+partition,complete,p_out_hpos,1024,2,1
+partition,complete,p_out_buf,1024,2,1
+partition,complete,.14,1024,2,1
+partition,complete,.06,1024,2,1
+unrolling,WriteOneBlock_f2r_WriteOneBlock,fun_03,8,,
+pipelining,1
+cycle_time,10,,,,

@@ -1,0 +1,69 @@
+===============================
+        Aladdin Results        
+===============================
+Running : res_conf-cyclic
+Cycle : 85 cycles
+Avg Power: 6.102 mW
+Idle FU Cycles: 19 cycles
+Avg FU Power: 5.54523 mW
+Avg FU Dynamic Power: 0.665688 mW
+Avg FU leakage Power: 4.87954 mW
+Avg MEM Power: 0.556771 mW
+Avg MEM Dynamic Power: 0.27958 mW
+Avg MEM Leakage Power: 0.277191 mW
+Total Area: 413774 uM^2
+FU Area: 396558 uM^2
+MEM Area: 17215.7 uM^2
+Num of Adders (32-bit): 12
+Num of Bit-wise Operators (32-bit): 1
+Num of Shifters (32-bit): 1
+Num of Registers (32-bit): 11
+===============================
+        Aladdin Results        
+===============================
+===============================
+        Aladdin Results        
+===============================
+Running : res_conf-cyclic
+Cycle : 84 cycles
+Avg Power: 5.9943 mW
+Idle FU Cycles: 19 cycles
+Avg FU Power: 5.4342 mW
+Avg FU Dynamic Power: 0.564187 mW
+Avg FU leakage Power: 4.87001 mW
+Avg MEM Power: 0.560099 mW
+Avg MEM Dynamic Power: 0.282908 mW
+Avg MEM Leakage Power: 0.277191 mW
+Total Area: 413056 uM^2
+FU Area: 395840 uM^2
+MEM Area: 17215.7 uM^2
+Num of Adders (32-bit): 8
+Num of Bit-wise Operators (32-bit): 1
+Num of Shifters (32-bit): 1
+Num of Registers (32-bit): 11
+===============================
+        Aladdin Results        
+===============================
+===============================
+        Aladdin Results        
+===============================
+Running : res_conf-cyclic
+Cycle : 84 cycles
+Avg Power: 5.9943 mW
+Idle FU Cycles: 19 cycles
+Avg FU Power: 5.4342 mW
+Avg FU Dynamic Power: 0.564187 mW
+Avg FU leakage Power: 4.87001 mW
+Avg MEM Power: 0.560099 mW
+Avg MEM Dynamic Power: 0.282908 mW
+Avg MEM Leakage Power: 0.277191 mW
+Total Area: 413056 uM^2
+FU Area: 395840 uM^2
+MEM Area: 17215.7 uM^2
+Num of Adders (32-bit): 8
+Num of Bit-wise Operators (32-bit): 1
+Num of Shifters (32-bit): 1
+Num of Registers (32-bit): 11
+===============================
+        Aladdin Results        
+===============================

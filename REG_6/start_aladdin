@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# Top Function Target
+export WORKLOAD=ChenIDct_f2r_forBody100_s2e_vectorBodyPreheader
+
+# Env. Variables needed.
+export LLVM_HOME=~giorgio/llvm-3.4/build/
+export TRACER_HOME=~giorgio/LLVM-Tracer/build/

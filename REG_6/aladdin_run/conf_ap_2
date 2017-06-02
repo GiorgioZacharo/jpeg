@@ -1,0 +1,5 @@
+partition,cyclic,aptr,1024,2,2
+partition,cyclic,y,1024,2,2
+unrolling,ChenIDct_f2r_forBody100_s2e_vectorBodyPreheader,reg_6,1
+pipelining,0,,
+cycle_time,10,,

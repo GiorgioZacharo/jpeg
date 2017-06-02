@@ -1,0 +1,6 @@
+partition,cyclic,.01,1024,2,1
+partition,cyclic,imatrix,1024,2,1
+partition,cyclic,IZigzagMatrix_f2r_IZigzagMatrix.zigzag_index,1024,2,1
+unrolling,IZigzagMatrix_f2r_IZigzagMatrix,fun_06,1
+pipelining,0
+cycle_time,10

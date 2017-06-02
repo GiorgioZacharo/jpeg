@@ -1,0 +1,9 @@
+partition,complete,x,2048,4,1
+partition,complete,y,2048,4,1
+partition,complete,aptr.0,2048,2,1
+unrolling,ChenIDct_f2r_ChenIDct,fun_01_a,8,,
+unrolling,ChenIDct_f2r_ChenIDct,fun_01_b,8,,
+unrolling,ChenIDct_f2r_ChenIDct,fun_01_c_a,8,,
+unrolling,ChenIDct_f2r_ChenIDct,fun_01_c_b,8,,
+pipelining,1
+cycle_time,10,,,,

@@ -1,0 +1,72 @@
+===============================
+        Aladdin Results        
+===============================
+Running : res_conf_lu_4
+Cycle : 385 cycles
+Avg Power: 1.95575 mW
+Idle FU Cycles: 132 cycles
+Avg FU Power: 1.50727 mW
+Avg FU Dynamic Power: 0.883416 mW
+Avg FU leakage Power: 0.623854 mW
+Avg MEM Power: 0.448481 mW
+Avg MEM Dynamic Power: 0.170929 mW
+Avg MEM Leakage Power: 0.277552 mW
+Total Area: 77121.9 uM^2
+FU Area: 60023.4 uM^2
+MEM Area: 17098.5 uM^2
+Num of Multipliers (32-bit): 4
+Num of Adders (32-bit): 104
+Num of Bit-wise Operators (32-bit): 12
+Num of Shifters (32-bit): 72
+Num of Registers (32-bit): 23
+===============================
+        Aladdin Results        
+===============================
+===============================
+        Aladdin Results        
+===============================
+Running : res_conf_lu_4
+Cycle : 373 cycles
+Avg Power: 2.34622 mW
+Idle FU Cycles: 126 cycles
+Avg FU Power: 1.89365 mW
+Avg FU Dynamic Power: 0.911362 mW
+Avg FU leakage Power: 0.982285 mW
+Avg MEM Power: 0.452568 mW
+Avg MEM Dynamic Power: 0.175016 mW
+Avg MEM Leakage Power: 0.277552 mW
+Total Area: 111010 uM^2
+FU Area: 93911 uM^2
+MEM Area: 17098.5 uM^2
+Num of Multipliers (32-bit): 11
+Num of Adders (32-bit): 104
+Num of Bit-wise Operators (32-bit): 12
+Num of Shifters (32-bit): 72
+Num of Registers (32-bit): 32
+===============================
+        Aladdin Results        
+===============================
+===============================
+        Aladdin Results        
+===============================
+Running : res_conf_lu_4
+Cycle : 373 cycles
+Avg Power: 2.34622 mW
+Idle FU Cycles: 126 cycles
+Avg FU Power: 1.89365 mW
+Avg FU Dynamic Power: 0.911362 mW
+Avg FU leakage Power: 0.982285 mW
+Avg MEM Power: 0.452568 mW
+Avg MEM Dynamic Power: 0.175016 mW
+Avg MEM Leakage Power: 0.277552 mW
+Total Area: 111010 uM^2
+FU Area: 93911 uM^2
+MEM Area: 17098.5 uM^2
+Num of Multipliers (32-bit): 11
+Num of Adders (32-bit): 104
+Num of Bit-wise Operators (32-bit): 12
+Num of Shifters (32-bit): 72
+Num of Registers (32-bit): 32
+===============================
+        Aladdin Results        
+===============================

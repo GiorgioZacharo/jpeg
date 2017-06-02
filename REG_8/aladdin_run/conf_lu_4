@@ -1,0 +1,14 @@
+partition,complete,y_buf,1024,2,1
+partition,complete,y,1024,2,1
+partition,complete,u_buf,1024,2,1
+partition,complete,u,1024,2,1
+partition,complete,v_buf,1024,2,1
+partition,complete,v,1024,2,1
+partition,complete,r,1024,2,1
+partition,complete,g,1024,2,1
+partition,complete,b,1024,2,1
+partition,complete,rgb_buf,1024,2,1
+unrolling,decode_start_f2r_vectorPh_s2e_forBody96Preheader,reg_8,4
+unrolling,YuvToRgb_f2r_forBody_s2e_forEndLoopexit,reg_8b,4
+pipelining,0,,,,
+cycle_time,10,,,,

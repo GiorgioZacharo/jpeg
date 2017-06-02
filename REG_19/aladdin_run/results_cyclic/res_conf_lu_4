@@ -1,0 +1,138 @@
+===============================
+        Aladdin Results        
+===============================
+Running : res_conf_lu_4
+Cycle : 88 cycles
+Avg Power: 3.23155 mW
+Idle FU Cycles: 22 cycles
+Avg FU Power: 2.92636 mW
+Avg FU Dynamic Power: 0.386558 mW
+Avg FU leakage Power: 2.5398 mW
+Avg MEM Power: 0.30519 mW
+Avg MEM Dynamic Power: 0.18189 mW
+Avg MEM Leakage Power: 0.1233 mW
+Total Area: 214555 uM^2
+FU Area: 206380 uM^2
+MEM Area: 8175.79 uM^2
+Num of Adders (32-bit): 36
+Num of Bit-wise Operators (32-bit): 1
+Num of Shifters (32-bit): 4
+Num of Registers (32-bit): 15
+===============================
+        Aladdin Results        
+===============================
+===============================
+        Aladdin Results        
+===============================
+Running : res_conf_lu_4
+Cycle : 87 cycles
+Avg Power: 3.17503 mW
+Idle FU Cycles: 22 cycles
+Avg FU Power: 2.86775 mW
+Avg FU Dynamic Power: 0.33747 mW
+Avg FU leakage Power: 2.53028 mW
+Avg MEM Power: 0.307281 mW
+Avg MEM Dynamic Power: 0.183981 mW
+Avg MEM Leakage Power: 0.1233 mW
+Total Area: 213838 uM^2
+FU Area: 205662 uM^2
+MEM Area: 8175.79 uM^2
+Num of Adders (32-bit): 32
+Num of Bit-wise Operators (32-bit): 1
+Num of Shifters (32-bit): 4
+Num of Registers (32-bit): 15
+===============================
+        Aladdin Results        
+===============================
+===============================
+        Aladdin Results        
+===============================
+Running : res_conf_lu_4
+Cycle : 87 cycles
+Avg Power: 3.17503 mW
+Idle FU Cycles: 22 cycles
+Avg FU Power: 2.86775 mW
+Avg FU Dynamic Power: 0.33747 mW
+Avg FU leakage Power: 2.53028 mW
+Avg MEM Power: 0.307281 mW
+Avg MEM Dynamic Power: 0.183981 mW
+Avg MEM Leakage Power: 0.1233 mW
+Total Area: 213838 uM^2
+FU Area: 205662 uM^2
+MEM Area: 8175.79 uM^2
+Num of Adders (32-bit): 32
+Num of Bit-wise Operators (32-bit): 1
+Num of Shifters (32-bit): 4
+Num of Registers (32-bit): 15
+===============================
+        Aladdin Results        
+===============================
+===============================
+        Aladdin Results        
+===============================
+Running : res_conf_lu_4
+Cycle : 87 cycles
+Avg Power: 3.17503 mW
+Idle FU Cycles: 22 cycles
+Avg FU Power: 2.86775 mW
+Avg FU Dynamic Power: 0.33747 mW
+Avg FU leakage Power: 2.53028 mW
+Avg MEM Power: 0.307281 mW
+Avg MEM Dynamic Power: 0.183981 mW
+Avg MEM Leakage Power: 0.1233 mW
+Total Area: 213838 uM^2
+FU Area: 205662 uM^2
+MEM Area: 8175.79 uM^2
+Num of Adders (32-bit): 32
+Num of Bit-wise Operators (32-bit): 1
+Num of Shifters (32-bit): 4
+Num of Registers (32-bit): 15
+===============================
+        Aladdin Results        
+===============================
+===============================
+        Aladdin Results        
+===============================
+Running : res_conf_lu_4
+Cycle : 87 cycles
+Avg Power: 3.17503 mW
+Idle FU Cycles: 22 cycles
+Avg FU Power: 2.86775 mW
+Avg FU Dynamic Power: 0.33747 mW
+Avg FU leakage Power: 2.53028 mW
+Avg MEM Power: 0.307281 mW
+Avg MEM Dynamic Power: 0.183981 mW
+Avg MEM Leakage Power: 0.1233 mW
+Total Area: 213838 uM^2
+FU Area: 205662 uM^2
+MEM Area: 8175.79 uM^2
+Num of Adders (32-bit): 32
+Num of Bit-wise Operators (32-bit): 1
+Num of Shifters (32-bit): 4
+Num of Registers (32-bit): 15
+===============================
+        Aladdin Results        
+===============================
+===============================
+        Aladdin Results        
+===============================
+Running : res_conf_lu_4
+Cycle : 87 cycles
+Avg Power: 3.17503 mW
+Idle FU Cycles: 22 cycles
+Avg FU Power: 2.86775 mW
+Avg FU Dynamic Power: 0.33747 mW
+Avg FU leakage Power: 2.53028 mW
+Avg MEM Power: 0.307281 mW
+Avg MEM Dynamic Power: 0.183981 mW
+Avg MEM Leakage Power: 0.1233 mW
+Total Area: 213838 uM^2
+FU Area: 205662 uM^2
+MEM Area: 8175.79 uM^2
+Num of Adders (32-bit): 32
+Num of Bit-wise Operators (32-bit): 1
+Num of Shifters (32-bit): 4
+Num of Registers (32-bit): 15
+===============================
+        Aladdin Results        
+===============================

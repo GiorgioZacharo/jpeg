@@ -1,0 +1,6 @@
+partition,complete,.14,2048,4,1
+partition,complete,.06,2048,4,1
+partition,complete,out_buf,2048,4,1
+unrolling,WriteOneBlock_f2r_WriteOneBlock,fun_0,1
+pipelining,0
+cycle_time,10

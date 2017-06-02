@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# Top Function Target
+export WORKLOAD=decode_start_f2r_vectorPh_s2e_forBody96Preheader
+
+# Env. Variables needed.
+export LLVM_HOME=~giorgio/llvm-3.4/build/
+export TRACER_HOME=~giorgio/LLVM-Tracer/build/

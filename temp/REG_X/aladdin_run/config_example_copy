@@ -1,0 +1,5 @@
+partition,cyclic,aptr.04,4096,2,2
+partition,cyclic,y_buf,4096,2,2
+unrolling,YuvToRgb_f2r_forBody_s2e_forEndLoopexit,region,8
+pipelining,0
+cycle_time,10

@@ -1,0 +1,24 @@
+===============================
+        Aladdin Results        
+===============================
+Running : res_conf_ap_2
+Cycle : 321 cycles
+Avg Power: 1.56147 mW
+Idle FU Cycles: 193 cycles
+Avg FU Power: 1.03213 mW
+Avg FU Dynamic Power: 0.802395 mW
+Avg FU leakage Power: 0.229735 mW
+Avg MEM Power: 0.529338 mW
+Avg MEM Dynamic Power: 0.0669095 mW
+Avg MEM Leakage Power: 0.462428 mW
+Total Area: 51188.5 uM^2
+FU Area: 21754.8 uM^2
+MEM Area: 29433.7 uM^2
+Num of Multipliers (32-bit): 4
+Num of Adders (32-bit): 6
+Num of Bit-wise Operators (32-bit): 3
+Num of Shifters (32-bit): 4
+Num of Registers (32-bit): 6
+===============================
+        Aladdin Results        
+===============================

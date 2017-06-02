@@ -1,0 +1,10 @@
+partition,complete,voffs,1024,4,1
+partition,complete,hoffs,1024,4,1
+partition,complete,p_jinfo_image_width,1024,4,1
+partition,complete,p_jinfo_image_height,1024,4,1
+partition,cyclic,.14,1024,4,1
+partition,cyclic,.06,1024,4,1
+partition,cyclic,out_buf,1024,4,1
+unrolling,WriteOneBlock_f2r_entry_s2e_forEnd13,reg_19,8,,
+pipelining,1
+cycle_time,10,,,,

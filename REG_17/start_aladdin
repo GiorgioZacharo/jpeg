@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# Top Function Target
+export WORKLOAD=WriteOneBlock_f2r_ifThen7Us_s2e_forCond2ForEnd_crit_edgeUs
+
+# Env. Variables needed.
+export LLVM_HOME=~giorgio/llvm-3.4/build/
+export TRACER_HOME=~giorgio/LLVM-Tracer/build/

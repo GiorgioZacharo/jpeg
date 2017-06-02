@@ -1,0 +1,21 @@
+===============================
+        Aladdin Results        
+===============================
+Running : YuvToRgb_f2r_forBody_s2e_forEndLoopexit_ap
+Cycle : 129 cycles
+Avg Power: 1.50175 mW
+Idle FU Cycles: 65 cycles
+Avg FU Power: 0.579402 mW
+Avg FU Dynamic Power: 0.519451 mW
+Avg FU leakage Power: 0.0599511 mW
+Avg MEM Power: 0.922351 mW
+Avg MEM Dynamic Power: 0.183427 mW
+Avg MEM Leakage Power: 0.738924 mW
+Total Area: 49642.7 uM^2
+FU Area: 5552.03 uM^2
+MEM Area: 44090.7 uM^2
+Num of Multipliers (32-bit): 1
+Num of Registers (32-bit): 5
+===============================
+        Aladdin Results        
+===============================

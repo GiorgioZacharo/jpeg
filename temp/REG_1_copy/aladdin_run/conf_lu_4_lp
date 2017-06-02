@@ -1,0 +1,13 @@
+partition,complete,y_buf,2048,2,1
+partition,complete,y,2048,2,1
+partition,complete,u_buf,2048,2,1
+partition,complete,u,2048,2,1
+partition,complete,v_buf,2048,2,1
+partition,complete,v,2048,2,1
+partition,complete,r,2048,2,1
+partition,complete,g,2048,2,1
+partition,complete,b,2048,2,1
+partition,complete,rgb_buf,2048,2,1
+unrolling,YuvToRgb_f2r_forBody_s2e_forEndLoopexit,region,4
+pipelining,1
+cycle_time,10

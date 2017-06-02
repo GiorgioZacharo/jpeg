@@ -1,0 +1,8 @@
+partition,cyclic,store,2018,2,1
+partition,cyclic,out_buf,2018,2,1
+partition,cyclic,.13,2018,2,1
+partition,cyclic,.06,2018,2,1
+unrolling,WriteOneBlock_f2r_ifThenUs_s2e_forEnd13Loopexit,reg_4_a,1
+unrolling,WriteOneBlock_f2r_ifThenUs_s2e_forEnd13Loopexit,reg_4_b,1
+pipelining,0
+cycle_time,10

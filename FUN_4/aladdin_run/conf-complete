@@ -1,0 +1,5 @@
+partition,complete,mptr.02,1024,2,1
+partition,complete,.01,1024,2,1
+unrolling,IQuantize_f2r_IQuantize,fun_04,1
+pipelining,0
+cycle_time,10

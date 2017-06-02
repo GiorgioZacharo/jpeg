@@ -1,0 +1,9 @@
+partition,cyclic,y,2048,2,1
+partition,cyclic,voffs,2048,2,1
+partition,cyclic,hoffs,2048,2,1
+partition,cyclic,.14,2048,2,1
+partition,cyclic,.06,2048,2,1
+partition,cyclic,out_buf,2048,2,1
+unrolling,WriteOneBlock_f2r_WriteOneBlock,reg_3,2,,
+pipelining,1
+cycle_time,10,,,,

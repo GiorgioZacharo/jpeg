@@ -1,0 +1,100 @@
+===============================
+        Aladdin Results        
+===============================
+Running : res_conf_ap_2
+Cycle : 193 cycles
+Avg Power: 0.276005 mW
+Idle FU Cycles: 193 cycles
+Avg FU Power: 0.030376 mW
+Avg FU Dynamic Power: 0.0233114 mW
+Avg FU leakage Power: 0.00706459 mW
+Avg MEM Power: 0.245629 mW
+Avg MEM Dynamic Power: 0.0606578 mW
+Avg MEM Leakage Power: 0.184971 mW
+Total Area: 12347.7 uM^2
+FU Area: 574.218 uM^2
+MEM Area: 11773.5 uM^2
+Num of Registers (32-bit): 3
+===============================
+        Aladdin Results        
+===============================
+===============================
+        Aladdin Results        
+===============================
+Running : res_conf_ap_2
+Cycle : 190 cycles
+Avg Power: 0.279593 mW
+Idle FU Cycles: 190 cycles
+Avg FU Power: 0.0330057 mW
+Avg FU Dynamic Power: 0.0235863 mW
+Avg FU leakage Power: 0.00941945 mW
+Avg MEM Power: 0.246587 mW
+Avg MEM Dynamic Power: 0.0616155 mW
+Avg MEM Leakage Power: 0.184971 mW
+Total Area: 12539.1 uM^2
+FU Area: 765.623 uM^2
+MEM Area: 11773.5 uM^2
+Num of Registers (32-bit): 4
+===============================
+        Aladdin Results        
+===============================
+===============================
+        Aladdin Results        
+===============================
+Running : res_conf_ap_2
+Cycle : 190 cycles
+Avg Power: 0.279593 mW
+Idle FU Cycles: 190 cycles
+Avg FU Power: 0.0330057 mW
+Avg FU Dynamic Power: 0.0235863 mW
+Avg FU leakage Power: 0.00941945 mW
+Avg MEM Power: 0.246587 mW
+Avg MEM Dynamic Power: 0.0616155 mW
+Avg MEM Leakage Power: 0.184971 mW
+Total Area: 12539.1 uM^2
+FU Area: 765.623 uM^2
+MEM Area: 11773.5 uM^2
+Num of Registers (32-bit): 4
+===============================
+        Aladdin Results        
+===============================
+===============================
+        Aladdin Results        
+===============================
+Running : res_conf_ap_2
+Cycle : 190 cycles
+Avg Power: 0.279593 mW
+Idle FU Cycles: 190 cycles
+Avg FU Power: 0.0330057 mW
+Avg FU Dynamic Power: 0.0235863 mW
+Avg FU leakage Power: 0.00941945 mW
+Avg MEM Power: 0.246587 mW
+Avg MEM Dynamic Power: 0.0616155 mW
+Avg MEM Leakage Power: 0.184971 mW
+Total Area: 12539.1 uM^2
+FU Area: 765.623 uM^2
+MEM Area: 11773.5 uM^2
+Num of Registers (32-bit): 4
+===============================
+        Aladdin Results        
+===============================
+===============================
+        Aladdin Results        
+===============================
+Running : res_conf_ap_2
+Cycle : 190 cycles
+Avg Power: 0.279593 mW
+Idle FU Cycles: 190 cycles
+Avg FU Power: 0.0330057 mW
+Avg FU Dynamic Power: 0.0235863 mW
+Avg FU leakage Power: 0.00941945 mW
+Avg MEM Power: 0.246587 mW
+Avg MEM Dynamic Power: 0.0616155 mW
+Avg MEM Leakage Power: 0.184971 mW
+Total Area: 12539.1 uM^2
+FU Area: 765.623 uM^2
+MEM Area: 11773.5 uM^2
+Num of Registers (32-bit): 4
+===============================
+        Aladdin Results        
+===============================

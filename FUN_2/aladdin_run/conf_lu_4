@@ -1,0 +1,8 @@
+partition,cyclic,y_buf,2048,4,1
+partition,cyclic,u_buf,2048,4,1
+partition,cyclic,v_buf,2048,4,1
+partition,cyclic,rgb_buf,2048,4,1
+partition,cyclic,aptr.0,2048,2,1
+unrolling,YuvToRgb_f2r_YuvToRgb,fun_02,4
+pipelining,0,,,,
+cycle_time,10,,,,

@@ -1,0 +1,13 @@
+partition,complete,out_buf,2048,4,1
+partition,complete,p_out_vpos,2048,4,1
+partition,complete,voffs,2048,4,1
+partition,complete,p_out_hpos,2048,4,1
+partition,complete,hoffs,2048,4,1
+partition,complete,p_jinfo_image_width,2048,4,1
+partition,complete,p_jinfo_image_height,2048,4,1
+partition,cyclic,.13,2048,4,1
+partition,cyclic,.06,2048,4,1
+unrolling,WriteOneBlock_f2r_ifThenUs_s2e_forEnd13Loopexit,reg_4_5_a,1
+unrolling,WriteOneBlock_f2r_ifThenUs_s2e_forEnd13Loopexit,reg_4_5_b,1
+pipelining,0
+cycle_time,10

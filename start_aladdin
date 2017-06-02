@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# Env. Variables needed.
+export WORKLOAD=ChenIDct_f2r_vectorBody_s2e_forEnd212
+export LLVM_HOME=~giorgio/llvm-3.4/build/
+export TRACER_HOME=~giorgio/LLVM-Tracer/build/

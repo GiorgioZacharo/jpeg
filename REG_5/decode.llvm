@@ -1,0 +1,2000 @@
+; ModuleID = 'decode.c'
+target datalayout = "e-p:64:64:64-i1:8:8-i8:8:8-i16:16:16-i32:32:32-i64:64:64-f32:32:32-f64:64:64-v64:64:64-v128:128:128-a0:0:64-s0:64:64-f80:128:128-n8:16:32:64-S128"
+target triple = "x86_64-unknown-linux-gnu"
+
+@IZigzagMatrix_f2r_forBody_s2e_forEnd.zigzag_index = internal unnamed_addr constant [64 x i32] [i32 0, i32 1, i32 5, i32 6, i32 14, i32 15, i32 27, i32 28, i32 2, i32 4, i32 7, i32 13, i32 16, i32 26, i32 29, i32 42, i32 3, i32 8, i32 12, i32 17, i32 25, i32 30, i32 41, i32 43, i32 9, i32 11, i32 18, i32 24, i32 31, i32 40, i32 44, i32 53, i32 10, i32 19, i32 23, i32 32, i32 39, i32 45, i32 52, i32 54, i32 20, i32 22, i32 33, i32 38, i32 46, i32 51, i32 55, i32 60, i32 21, i32 34, i32 37, i32 47, i32 50, i32 56, i32 59, i32 61, i32 35, i32 36, i32 48, i32 49, i32 57, i32 58, i32 62, i32 63], align 16
+@.str = private unnamed_addr constant [20 x i8] c"this is executed! \0A\00", align 1
+@p_jinfo_image_width = common global i16 0, align 2
+@p_jinfo_image_height = common global i16 0, align 2
+@.str1 = private unnamed_addr constant [26 x i8] c"Decode 1:1:1 NumMCU = %d\0A\00", align 1
+@.str2 = private unnamed_addr constant [26 x i8] c"Decode 4:1:1 NumMCU = %d\0A\00", align 1
+@p_jinfo_data_precision = common global i8 0, align 1
+@p_jinfo_num_components = common global i8 0, align 1
+@p_jinfo_smp_fact = common global i32 0, align 4
+@p_jinfo_comps_info_index = common global [3 x i8] zeroinitializer, align 1
+@p_jinfo_comps_info_id = common global [3 x i8] zeroinitializer, align 1
+@p_jinfo_comps_info_h_samp_factor = common global [3 x i8] zeroinitializer, align 1
+@p_jinfo_comps_info_v_samp_factor = common global [3 x i8] zeroinitializer, align 1
+@p_jinfo_comps_info_quant_tbl_no = common global [3 x i8] zeroinitializer, align 1
+@p_jinfo_comps_info_dc_tbl_no = common global [3 x i8] zeroinitializer, align 1
+@p_jinfo_comps_info_ac_tbl_no = common global [3 x i8] zeroinitializer, align 1
+@p_jinfo_quant_tbl_quantval = common global [4 x [64 x i32]] zeroinitializer, align 16
+@p_jinfo_dc_xhuff_tbl_bits = common global [2 x [36 x i32]] zeroinitializer, align 16
+@p_jinfo_dc_xhuff_tbl_huffval = common global [2 x [257 x i32]] zeroinitializer, align 16
+@p_jinfo_ac_xhuff_tbl_bits = common global [2 x [36 x i32]] zeroinitializer, align 16
+@p_jinfo_ac_xhuff_tbl_huffval = common global [2 x [257 x i32]] zeroinitializer, align 16
+@p_jinfo_dc_dhuff_tbl_ml = common global [2 x i32] zeroinitializer, align 4
+@p_jinfo_dc_dhuff_tbl_maxcode = common global [2 x [36 x i32]] zeroinitializer, align 16
+@p_jinfo_dc_dhuff_tbl_mincode = common global [2 x [36 x i32]] zeroinitializer, align 16
+@p_jinfo_dc_dhuff_tbl_valptr = common global [2 x [36 x i32]] zeroinitializer, align 16
+@p_jinfo_ac_dhuff_tbl_ml = common global [2 x i32] zeroinitializer, align 4
+@p_jinfo_ac_dhuff_tbl_maxcode = common global [2 x [36 x i32]] zeroinitializer, align 16
+@p_jinfo_ac_dhuff_tbl_mincode = common global [2 x [36 x i32]] zeroinitializer, align 16
+@p_jinfo_ac_dhuff_tbl_valptr = common global [2 x [36 x i32]] zeroinitializer, align 16
+@p_jinfo_MCUWidth = common global i32 0, align 4
+@p_jinfo_MCUHeight = common global i32 0, align 4
+@p_jinfo_NumMCU = common global i32 0, align 4
+@rgb_buf = common global [4 x [3 x [64 x i32]]] zeroinitializer, align 16
+@main_result = common global i32 0, align 4
+@p_jinfo_jpeg_data = common global [5310 x i8] zeroinitializer, align 16
+@CurHuffReadBuf = common global [5310 x i8] zeroinitializer, align 16
+@OutData_image_width = common global i32 0, align 4
+@OutData_image_height = common global i32 0, align 4
+@OutData_comp_vpos = common global [3 x i32] zeroinitializer, align 4
+@OutData_comp_hpos = common global [3 x i32] zeroinitializer, align 4
+@OutData_comp_buf = common global [3 x [5310 x i8]] zeroinitializer, align 16
+@hana_jpg = common global [5207 x i8] zeroinitializer, align 16
+@hana_bmp = common global [3 x [5310 x i8]] zeroinitializer, align 16
+@out_width = common global i32 0, align 4
+@out_length = common global i32 0, align 4
+@JpegFileBuf = common global [5310 x i8] zeroinitializer, align 16
+@out_unread_marker = common global [10 x i32] zeroinitializer, align 16
+@i_marker = common global i32 0, align 4
+@out_length_get_sof = common global i32 0, align 4
+@out_data_precision_get_sof = common global i32 0, align 4
+@out_p_jinfo_image_height_get_sof = common global i32 0, align 4
+@out_p_jinfo_image_width_get_sof = common global i32 0, align 4
+@out_p_jinfo_num_components_get_sof = common global i32 0, align 4
+@out_index_get_sof = common global [3 x i32] zeroinitializer, align 4
+@out_id_get_sof = common global [3 x i32] zeroinitializer, align 4
+@out_h_samp_factor_get_sof = common global [3 x i32] zeroinitializer, align 4
+@out_v_samp_factor_get_sof = common global [3 x i32] zeroinitializer, align 4
+@out_quant_tbl_no_get_sof = common global [3 x i32] zeroinitializer, align 4
+@i_get_sos = common global i32 0, align 4
+@out_length_get_sos = common global i32 0, align 4
+@out_num_comp_get_sos = common global i32 0, align 4
+@out_comp_id_get_sos = common global [3 x i32] zeroinitializer, align 4
+@out_dc_tbl_no_get_sos = common global [3 x i32] zeroinitializer, align 4
+@out_ac_tbl_no_get_sos = common global [3 x i32] zeroinitializer, align 4
+@i_get_dht = common global i32 0, align 4
+@out_length_get_dht = common global [4 x i32] zeroinitializer, align 16
+@out_index_get_dht = common global [4 x i32] zeroinitializer, align 16
+@out_count_get_dht = common global [4 x i32] zeroinitializer, align 16
+@i_get_dqt = common global i32 0, align 4
+@out_length_get_dqt = common global [2 x i32] zeroinitializer, align 4
+@out_prec_get_dht = common global [2 x i32] zeroinitializer, align 4
+@out_num_get_dht = common global [2 x i32] zeroinitializer, align 4
+
+; Function Attrs: nounwind uwtable
+define void @IZigzagMatrix_f2r_forBody_s2e_forEnd(i32* nocapture readonly %imatrix, i32* nocapture %omatrix) #0 {
+  tail call void @llvm.dbg.value(metadata !{i32* %imatrix}, i64 0, metadata !11), !dbg !442
+  tail call void @llvm.dbg.value(metadata !{i32* %omatrix}, i64 0, metadata !12), !dbg !442
+  tail call void @llvm.dbg.value(metadata !2, i64 0, metadata !13), !dbg !443
+  br label %1, !dbg !443
+
+; <label>:1                                       ; preds = %1, %0
+  %indvars.iv = phi i64 [ 0, %0 ], [ %indvars.iv.next, %1 ]
+  %.01 = phi i32* [ %omatrix, %0 ], [ %7, %1 ]
+  %2 = getelementptr inbounds [64 x i32]* @IZigzagMatrix_f2r_forBody_s2e_forEnd.zigzag_index, i64 0, i64 %indvars.iv, !dbg !445
+  %3 = load i32* %2, align 4, !dbg !445, !tbaa !447
+  %4 = sext i32 %3 to i64, !dbg !445
+  %5 = getelementptr inbounds i32* %imatrix, i64 %4, !dbg !445
+  %6 = load i32* %5, align 4, !dbg !445, !tbaa !447
+  %7 = getelementptr inbounds i32* %.01, i64 1, !dbg !445
+  tail call void @llvm.dbg.value(metadata !{i32* %7}, i64 0, metadata !12), !dbg !445
+  store i32 %6, i32* %.01, align 4, !dbg !445, !tbaa !447
+  %indvars.iv.next = add nuw nsw i64 %indvars.iv, 1, !dbg !443
+  %exitcond = icmp eq i64 %indvars.iv.next, 64, !dbg !443
+  br i1 %exitcond, label %8, label %1, !dbg !443
+
+; <label>:8                                       ; preds = %1
+  ret void, !dbg !451
+}
+
+; Function Attrs: nounwind readnone
+declare void @llvm.dbg.declare(metadata, metadata) #1
+
+; Function Attrs: nounwind uwtable
+define void @IZigzagMatrix_f2r_IZigzagMatrix(i32* nocapture readonly %imatrix, i32* nocapture %omatrix) #0 {
+  tail call void @llvm.dbg.value(metadata !{i32* %imatrix}, i64 0, metadata !16), !dbg !452
+  tail call void @llvm.dbg.value(metadata !{i32* %omatrix}, i64 0, metadata !17), !dbg !452
+  tail call void @IZigzagMatrix_f2r_forBody_s2e_forEnd(i32* %imatrix, i32* %omatrix) #4, !dbg !453
+  ret void, !dbg !454
+}
+
+; Function Attrs: nounwind uwtable
+define i32 @IQuantize_f2r_forBody_s2e_forEndLoopexit(i32* %matrix, i32* nocapture readonly %qmatrix, i32* nocapture readnone %mptr) #0 {
+.lr.ph:
+  tail call void @llvm.dbg.value(metadata !{i32* %matrix}, i64 0, metadata !24), !dbg !455
+  tail call void @llvm.dbg.value(metadata !{i32* %qmatrix}, i64 0, metadata !25), !dbg !455
+  tail call void @llvm.dbg.value(metadata !{i32* %mptr}, i64 0, metadata !26), !dbg !455
+  tail call void @llvm.dbg.value(metadata !{i32* %matrix}, i64 0, metadata !26), !dbg !456
+  %0 = getelementptr inbounds i32* %matrix, i64 64, !dbg !456
+  br label %1, !dbg !456
+
+; <label>:1                                       ; preds = %.lr.ph, %1
+  %.03 = phi i32* [ %matrix, %.lr.ph ], [ %6, %1 ]
+  %.012 = phi i32* [ %qmatrix, %.lr.ph ], [ %5, %1 ]
+  %2 = load i32* %.03, align 4, !dbg !458, !tbaa !447
+  %3 = load i32* %.012, align 4, !dbg !458, !tbaa !447
+  %4 = mul i32 %3, %2, !dbg !458
+  store i32 %4, i32* %.03, align 4, !dbg !458, !tbaa !447
+  %5 = getelementptr inbounds i32* %.012, i64 1, !dbg !460
+  tail call void @llvm.dbg.value(metadata !{i32* %5}, i64 0, metadata !25), !dbg !460
+  %6 = getelementptr inbounds i32* %.03, i64 1, !dbg !456
+  tail call void @llvm.dbg.value(metadata !{i32* %6}, i64 0, metadata !26), !dbg !456
+  %7 = icmp ult i32* %6, %0, !dbg !456
+  br i1 %7, label %1, label %._crit_edge, !dbg !456
+
+._crit_edge:                                      ; preds = %1
+  ret i32 undef, !dbg !461
+}
+
+; Function Attrs: nounwind uwtable
+define void @IQuantize_f2r_entry_s2e_forEnd(i32* %matrix, i32* nocapture readonly %qmatrix) #0 {
+  tail call void @llvm.dbg.value(metadata !{i32* %matrix}, i64 0, metadata !31), !dbg !462
+  tail call void @llvm.dbg.value(metadata !{i32* %qmatrix}, i64 0, metadata !32), !dbg !462
+  %1 = tail call i32 @IQuantize_f2r_forBody_s2e_forEndLoopexit(i32* %matrix, i32* %qmatrix, i32* undef) #4, !dbg !463
+  ret void, !dbg !464
+}
+
+; Function Attrs: nounwind uwtable
+define void @IQuantize_f2r_IQuantize(i32* %matrix, i32* nocapture readonly %qmatrix) #0 {
+  tail call void @llvm.dbg.value(metadata !{i32* %matrix}, i64 0, metadata !36), !dbg !465
+  tail call void @llvm.dbg.value(metadata !{i32* %qmatrix}, i64 0, metadata !37), !dbg !465
+  tail call void @IQuantize_f2r_entry_s2e_forEnd(i32* %matrix, i32* %qmatrix) #4, !dbg !466
+  ret void, !dbg !467
+}
+
+; Function Attrs: nounwind uwtable
+define void @PostshiftIDctMatrix(i32* %matrix, i32 %shift) #0 {
+.lr.ph:
+  tail call void @llvm.dbg.value(metadata !{i32* %matrix}, i64 0, metadata !42), !dbg !468
+  tail call void @llvm.dbg.value(metadata !{i32 %shift}, i64 0, metadata !43), !dbg !468
+  tail call void @llvm.dbg.value(metadata !{i32* %matrix}, i64 0, metadata !44), !dbg !469
+  %0 = getelementptr inbounds i32* %matrix, i64 64, !dbg !469
+  br label %1, !dbg !469
+
+; <label>:1                                       ; preds = %.lr.ph, %1
+  %mptr.01 = phi i32* [ %matrix, %.lr.ph ], [ %4, %1 ]
+  %2 = load i32* %mptr.01, align 4, !dbg !471, !tbaa !447
+  %3 = add nsw i32 %2, %shift, !dbg !471
+  store i32 %3, i32* %mptr.01, align 4, !dbg !471, !tbaa !447
+  %4 = getelementptr inbounds i32* %mptr.01, i64 1, !dbg !469
+  tail call void @llvm.dbg.value(metadata !{i32* %4}, i64 0, metadata !44), !dbg !469
+  %5 = icmp ult i32* %4, %0, !dbg !469
+  br i1 %5, label %1, label %._crit_edge, !dbg !469
+
+._crit_edge:                                      ; preds = %1
+  ret void, !dbg !473
+}
+
+; Function Attrs: nounwind uwtable
+define void @BoundIDctMatrix_f2r_forBody_s2e_forEnd(i32* %matrix, i32 %Bound) #0 {
+.lr.ph:
+  tail call void @llvm.dbg.value(metadata !{i32* %matrix}, i64 0, metadata !47), !dbg !474
+  tail call void @llvm.dbg.value(metadata !{i32 %Bound}, i64 0, metadata !48), !dbg !474
+  tail call void @llvm.dbg.value(metadata !{i32* %matrix}, i64 0, metadata !49), !dbg !475
+  %0 = getelementptr inbounds i32* %matrix, i64 64, !dbg !475
+  br label %1, !dbg !475
+
+; <label>:1                                       ; preds = %.lr.ph, %8
+  %mptr.01 = phi i32* [ %matrix, %.lr.ph ], [ %9, %8 ]
+  %2 = load i32* %mptr.01, align 4, !dbg !477, !tbaa !447
+  %3 = icmp slt i32 %2, 0, !dbg !477
+  br i1 %3, label %4, label %5, !dbg !477
+
+; <label>:4                                       ; preds = %1
+  store i32 0, i32* %mptr.01, align 4, !dbg !480, !tbaa !447
+  br label %8, !dbg !482
+
+; <label>:5                                       ; preds = %1
+  %6 = icmp sgt i32 %2, %Bound, !dbg !483
+  br i1 %6, label %7, label %8, !dbg !483
+
+; <label>:7                                       ; preds = %5
+  store i32 %Bound, i32* %mptr.01, align 4, !dbg !485, !tbaa !447
+  br label %8, !dbg !487
+
+; <label>:8                                       ; preds = %4, %7, %5
+  %9 = getelementptr inbounds i32* %mptr.01, i64 1, !dbg !475
+  tail call void @llvm.dbg.value(metadata !{i32* %9}, i64 0, metadata !49), !dbg !475
+  %10 = icmp ult i32* %9, %0, !dbg !475
+  br i1 %10, label %1, label %._crit_edge, !dbg !475
+
+._crit_edge:                                      ; preds = %8
+  ret void, !dbg !488
+}
+
+; Function Attrs: nounwind uwtable
+define void @BoundIDctMatrix_f2r_BoundIDctMatrix(i32* %matrix, i32 %Bound) #0 {
+  tail call void @llvm.dbg.value(metadata !{i32* %matrix}, i64 0, metadata !52), !dbg !489
+  tail call void @llvm.dbg.value(metadata !{i32 %Bound}, i64 0, metadata !53), !dbg !489
+  tail call void @BoundIDctMatrix_f2r_forBody_s2e_forEnd(i32* %matrix, i32 %Bound) #4, !dbg !490
+  ret void, !dbg !491
+}
+
+; Function Attrs: nounwind uwtable
+define void @WriteOneBlock_f2r_ifThen7Us_s2e_forCond2ForEnd_crit_edgeUs(i32* nocapture readonly %store, i8* nocapture %out_buf, i32 %width, i32 %hoffs, i32 %diff) #0 {
+  tail call void @llvm.dbg.value(metadata !{i32* %store}, i64 0, metadata !60), !dbg !492
+  tail call void @llvm.dbg.value(metadata !{i8* %out_buf}, i64 0, metadata !61), !dbg !492
+  tail call void @llvm.dbg.value(metadata !{i32 %width}, i64 0, metadata !62), !dbg !492
+  tail call void @llvm.dbg.value(metadata !{i32 %hoffs}, i64 0, metadata !63), !dbg !492
+  tail call void @llvm.dbg.value(metadata !{i32 %diff}, i64 0, metadata !64), !dbg !492
+  tail call void @llvm.dbg.value(metadata !{i32 %hoffs}, i64 0, metadata !65), !dbg !493
+  %1 = icmp slt i32 %hoffs, %width, !dbg !495
+  br i1 %1, label %.lr.ph, label %._crit_edge, !dbg !493
+
+.lr.ph:                                           ; preds = %0
+  %2 = sext i32 %hoffs to i64
+  %3 = sext i32 %diff to i64, !dbg !493
+  %4 = add i32 %hoffs, -1, !dbg !493
+  %5 = add i32 %hoffs, 7, !dbg !493
+  %6 = icmp slt i32 %5, %hoffs
+  %smax = select i1 %6, i32 %hoffs, i32 %5
+  %7 = sub i32 %4, %smax, !dbg !493
+  %8 = sub i32 %hoffs, %width, !dbg !493
+  %9 = icmp ugt i32 %7, %8
+  %umax = select i1 %9, i32 %7, i32 %8
+  %10 = sub i32 %hoffs, %umax, !dbg !493
+  br label %11, !dbg !493
+
+; <label>:11                                      ; preds = %11, %.lr.ph
+  %indvars.iv = phi i64 [ %2, %.lr.ph ], [ %indvars.iv.next, %11 ]
+  %.01 = phi i32* [ %store, %.lr.ph ], [ %12, %11 ]
+  %12 = getelementptr inbounds i32* %.01, i64 1, !dbg !498
+  tail call void @llvm.dbg.value(metadata !{i32* %12}, i64 0, metadata !60), !dbg !498
+  %13 = load i32* %.01, align 4, !dbg !498, !tbaa !447
+  %14 = trunc i32 %13 to i8, !dbg !498
+  %15 = add nsw i64 %indvars.iv, %3, !dbg !498
+  %16 = getelementptr inbounds i8* %out_buf, i64 %15, !dbg !498
+  store i8 %14, i8* %16, align 1, !dbg !498, !tbaa !500
+  %indvars.iv.next = add nsw i64 %indvars.iv, 1, !dbg !493
+  %lftr.wideiv = trunc i64 %indvars.iv.next to i32, !dbg !493
+  %exitcond = icmp eq i32 %lftr.wideiv, %10, !dbg !493
+  br i1 %exitcond, label %._crit_edge, label %11, !dbg !493
+
+._crit_edge:                                      ; preds = %11, %0
+  ret void, !dbg !501
+}
+
+; Function Attrs: nounwind uwtable
+define void @WriteOneBlock_f2r_ifThenUs_s2e_forEnd13Loopexit(i32* nocapture readonly %store, i8* nocapture %out_buf, i32 %width, i32 %height, i32 %voffs, i32 %hoffs) #0 {
+  tail call void @llvm.dbg.value(metadata !{i32* %store}, i64 0, metadata !70), !dbg !502
+  tail call void @llvm.dbg.value(metadata !{i8* %out_buf}, i64 0, metadata !71), !dbg !502
+  tail call void @llvm.dbg.value(metadata !{i32 %width}, i64 0, metadata !72), !dbg !502
+  tail call void @llvm.dbg.value(metadata !{i32 %height}, i64 0, metadata !73), !dbg !502
+  tail call void @llvm.dbg.value(metadata !{i32 %voffs}, i64 0, metadata !74), !dbg !503
+  tail call void @llvm.dbg.value(metadata !{i32 %hoffs}, i64 0, metadata !75), !dbg !503
+  tail call void @llvm.dbg.value(metadata !{i32 %voffs}, i64 0, metadata !76), !dbg !504
+  %1 = icmp slt i32 %voffs, %height, !dbg !505
+  br i1 %1, label %.lr.ph8, label %._crit_edge9, !dbg !504
+
+.lr.ph8:                                          ; preds = %0
+  %2 = icmp slt i32 %hoffs, %width, !dbg !506
+  %3 = sext i32 %hoffs to i64
+  %4 = add i32 %hoffs, -1, !dbg !504
+  %5 = add i32 %hoffs, 7, !dbg !504
+  %6 = icmp slt i32 %5, %hoffs
+  %smax = select i1 %6, i32 %hoffs, i32 %5
+  %7 = sub i32 %4, %smax, !dbg !504
+  %8 = sub i32 %hoffs, %width, !dbg !504
+  %9 = icmp ugt i32 %7, %8
+  %umax = select i1 %9, i32 %7, i32 %8
+  %10 = xor i32 %umax, -1, !dbg !504
+  %11 = zext i32 %10 to i64
+  %12 = add i64 %11, 1, !dbg !504
+  %13 = sub i32 %hoffs, %umax, !dbg !504
+  %14 = sext i32 %voffs to i64
+  %15 = add i32 %voffs, -1, !dbg !504
+  %16 = add i32 %voffs, 7, !dbg !504
+  %17 = icmp slt i32 %16, %voffs
+  %smax12 = select i1 %17, i32 %voffs, i32 %16
+  %18 = sub i32 %15, %smax12, !dbg !504
+  %19 = sub i32 %voffs, %height, !dbg !504
+  %20 = icmp ugt i32 %18, %19
+  %umax13 = select i1 %20, i32 %18, i32 %19
+  %21 = sub i32 %voffs, %umax13, !dbg !504
+  br label %22, !dbg !504
+
+; <label>:22                                      ; preds = %32, %.lr.ph8
+  %indvars.iv10 = phi i64 [ %14, %.lr.ph8 ], [ %indvars.iv.next11, %32 ]
+  %.06 = phi i32* [ %store, %.lr.ph8 ], [ %.1.lcssa, %32 ]
+  tail call void @llvm.dbg.value(metadata !{i32 %24}, i64 0, metadata !77), !dbg !510
+  tail call void @llvm.dbg.value(metadata !{i32 %hoffs}, i64 0, metadata !82), !dbg !511
+  br i1 %2, label %.lr.ph, label %32, !dbg !511
+
+.lr.ph:                                           ; preds = %22
+  %23 = trunc i64 %indvars.iv10 to i32, !dbg !510
+  %24 = mul nsw i32 %23, %width, !dbg !510
+  %25 = sext i32 %24 to i64, !dbg !511
+  br label %26, !dbg !511
+
+; <label>:26                                      ; preds = %26, %.lr.ph
+  %indvars.iv = phi i64 [ %3, %.lr.ph ], [ %indvars.iv.next, %26 ]
+  %.13 = phi i32* [ %.06, %.lr.ph ], [ %27, %26 ]
+  %27 = getelementptr inbounds i32* %.13, i64 1, !dbg !512
+  tail call void @llvm.dbg.value(metadata !{i32* %scevgep}, i64 0, metadata !70), !dbg !512
+  %28 = load i32* %.13, align 4, !dbg !512, !tbaa !447
+  %29 = trunc i32 %28 to i8, !dbg !512
+  %30 = add nsw i64 %indvars.iv, %25, !dbg !512
+  %31 = getelementptr inbounds i8* %out_buf, i64 %30, !dbg !512
+  store i8 %29, i8* %31, align 1, !dbg !512, !tbaa !500
+  %indvars.iv.next = add nsw i64 %indvars.iv, 1, !dbg !511
+  %lftr.wideiv = trunc i64 %indvars.iv.next to i32, !dbg !511
+  %exitcond = icmp eq i32 %lftr.wideiv, %13, !dbg !511
+  br i1 %exitcond, label %._crit_edge, label %26, !dbg !511
+
+._crit_edge:                                      ; preds = %26
+  %scevgep = getelementptr i32* %.06, i64 %12
+  br label %32, !dbg !511
+
+; <label>:32                                      ; preds = %._crit_edge, %22
+  %.1.lcssa = phi i32* [ %scevgep, %._crit_edge ], [ %.06, %22 ]
+  %indvars.iv.next11 = add nsw i64 %indvars.iv10, 1, !dbg !504
+  %lftr.wideiv14 = trunc i64 %indvars.iv.next11 to i32, !dbg !504
+  %exitcond15 = icmp eq i32 %lftr.wideiv14, %21, !dbg !504
+  br i1 %exitcond15, label %._crit_edge9, label %22, !dbg !504
+
+._crit_edge9:                                     ; preds = %32, %0
+  ret void, !dbg !514
+}
+
+; Function Attrs: nounwind uwtable
+define void @WriteOneBlock_f2r_entry_s2e_forEnd13(i32* nocapture readonly %store, i8* nocapture %out_buf, i32 %width, i32 %height, i32 %voffs, i32 %hoffs) #0 {
+  tail call void @llvm.dbg.value(metadata !{i32* %store}, i64 0, metadata !85), !dbg !515
+  tail call void @llvm.dbg.value(metadata !{i8* %out_buf}, i64 0, metadata !86), !dbg !515
+  tail call void @llvm.dbg.value(metadata !{i32 %width}, i64 0, metadata !87), !dbg !515
+  tail call void @llvm.dbg.value(metadata !{i32 %height}, i64 0, metadata !88), !dbg !515
+  tail call void @llvm.dbg.value(metadata !{i32 %voffs}, i64 0, metadata !89), !dbg !516
+  tail call void @llvm.dbg.value(metadata !{i32 %hoffs}, i64 0, metadata !90), !dbg !516
+  tail call void @WriteOneBlock_f2r_ifThenUs_s2e_forEnd13Loopexit(i32* %store, i8* %out_buf, i32 %width, i32 %height, i32 %voffs, i32 %hoffs) #4, !dbg !517
+  ret void, !dbg !518
+}
+
+; Function Attrs: nounwind uwtable
+define void @WriteOneBlock_f2r_WriteOneBlock(i32* nocapture readonly %store, i8* nocapture %out_buf, i32 %width, i32 %height, i32 %voffs, i32 %hoffs) #0 {
+  tail call void @llvm.dbg.value(metadata !{i32* %store}, i64 0, metadata !95), !dbg !519
+  tail call void @llvm.dbg.value(metadata !{i8* %out_buf}, i64 0, metadata !96), !dbg !519
+  tail call void @llvm.dbg.value(metadata !{i32 %width}, i64 0, metadata !97), !dbg !519
+  tail call void @llvm.dbg.value(metadata !{i32 %height}, i64 0, metadata !98), !dbg !519
+  tail call void @llvm.dbg.value(metadata !{i32 %voffs}, i64 0, metadata !99), !dbg !520
+  tail call void @llvm.dbg.value(metadata !{i32 %hoffs}, i64 0, metadata !100), !dbg !520
+  tail call void @llvm.dbg.value(metadata !{i32 %voffs}, i64 0, metadata !101), !dbg !521
+  %1 = icmp slt i32 %voffs, %height, !dbg !522
+  br i1 %1, label %.lr.ph8, label %._crit_edge9, !dbg !521
+
+.lr.ph8:                                          ; preds = %0
+  %2 = icmp slt i32 %hoffs, %width, !dbg !523
+  %3 = sext i32 %hoffs to i64
+  %4 = add i32 %hoffs, -1, !dbg !521
+  %5 = add i32 %hoffs, 7, !dbg !521
+  %6 = icmp slt i32 %5, %hoffs
+  %smax = select i1 %6, i32 %hoffs, i32 %5
+  %7 = sub i32 %4, %smax, !dbg !521
+  %8 = sub i32 %hoffs, %width, !dbg !521
+  %9 = icmp ugt i32 %7, %8
+  %umax = select i1 %9, i32 %7, i32 %8
+  %10 = xor i32 %umax, -1, !dbg !521
+  %11 = zext i32 %10 to i64
+  %12 = add i64 %11, 1, !dbg !521
+  %13 = sub i32 %hoffs, %umax, !dbg !521
+  %14 = sext i32 %voffs to i64
+  %15 = add i32 %voffs, -1, !dbg !521
+  %16 = add i32 %voffs, 7, !dbg !521
+  %17 = icmp slt i32 %16, %voffs
+  %smax12 = select i1 %17, i32 %voffs, i32 %16
+  %18 = sub i32 %15, %smax12, !dbg !521
+  %19 = sub i32 %voffs, %height, !dbg !521
+  %20 = icmp ugt i32 %18, %19
+  %umax13 = select i1 %20, i32 %18, i32 %19
+  %21 = sub i32 %voffs, %umax13, !dbg !521
+  br label %22, !dbg !521
+
+; <label>:22                                      ; preds = %32, %.lr.ph8
+  %indvars.iv10 = phi i64 [ %14, %.lr.ph8 ], [ %indvars.iv.next11, %32 ]
+  %.06 = phi i32* [ %store, %.lr.ph8 ], [ %.1.lcssa, %32 ]
+  tail call void @llvm.dbg.value(metadata !{i32 %24}, i64 0, metadata !103), !dbg !527
+  tail call void @llvm.dbg.value(metadata !{i32 %hoffs}, i64 0, metadata !102), !dbg !528
+  br i1 %2, label %.lr.ph, label %32, !dbg !528
+
+.lr.ph:                                           ; preds = %22
+  %23 = trunc i64 %indvars.iv10 to i32, !dbg !527
+  %24 = mul nsw i32 %23, %width, !dbg !527
+  %25 = sext i32 %24 to i64, !dbg !528
+  br label %26, !dbg !528
+
+; <label>:26                                      ; preds = %26, %.lr.ph
+  %indvars.iv = phi i64 [ %3, %.lr.ph ], [ %indvars.iv.next, %26 ]
+  %.14 = phi i32* [ %.06, %.lr.ph ], [ %27, %26 ]
+  %27 = getelementptr inbounds i32* %.14, i64 1, !dbg !529
+  tail call void @llvm.dbg.value(metadata !{i32* %scevgep}, i64 0, metadata !95), !dbg !529
+  %28 = load i32* %.14, align 4, !dbg !529, !tbaa !447
+  %29 = trunc i32 %28 to i8, !dbg !529
+  %30 = add nsw i64 %indvars.iv, %25, !dbg !529
+  %31 = getelementptr inbounds i8* %out_buf, i64 %30, !dbg !529
+  store i8 %29, i8* %31, align 1, !dbg !529, !tbaa !500
+  %indvars.iv.next = add nsw i64 %indvars.iv, 1, !dbg !528
+  %lftr.wideiv = trunc i64 %indvars.iv.next to i32, !dbg !528
+  %exitcond = icmp eq i32 %lftr.wideiv, %13, !dbg !528
+  br i1 %exitcond, label %._crit_edge, label %26, !dbg !528
+
+._crit_edge:                                      ; preds = %26
+  %scevgep = getelementptr i32* %.06, i64 %12
+  br label %32, !dbg !528
+
+; <label>:32                                      ; preds = %._crit_edge, %22
+  %.1.lcssa = phi i32* [ %scevgep, %._crit_edge ], [ %.06, %22 ]
+  %indvars.iv.next11 = add nsw i64 %indvars.iv10, 1, !dbg !521
+  %lftr.wideiv14 = trunc i64 %indvars.iv.next11 to i32, !dbg !521
+  %exitcond15 = icmp eq i32 %lftr.wideiv14, %21, !dbg !521
+  br i1 %exitcond15, label %._crit_edge9, label %22, !dbg !521
+
+._crit_edge9:                                     ; preds = %32, %0
+  ret void, !dbg !531
+}
+
+; Function Attrs: nounwind uwtable
+define void @WriteBlock_f2r_WriteBlock(i32* nocapture readonly %store, i32* nocapture %p_out_vpos, i32* nocapture %p_out_hpos, i8* nocapture %p_out_buf, i16 signext %p_jinfo_image_width, i16 signext %p_jinfo_image_height, i32 %p_jinfo_MCUWidth) #0 {
+  tail call void @llvm.dbg.value(metadata !{i32* %store}, i64 0, metadata !113), !dbg !532
+  tail call void @llvm.dbg.value(metadata !{i32* %p_out_vpos}, i64 0, metadata !114), !dbg !532
+  tail call void @llvm.dbg.value(metadata !{i32* %p_out_hpos}, i64 0, metadata !115), !dbg !532
+  tail call void @llvm.dbg.value(metadata !{i8* %p_out_buf}, i64 0, metadata !116), !dbg !533
+  tail call void @llvm.dbg.value(metadata !{i16 %p_jinfo_image_width}, i64 0, metadata !117), !dbg !533
+  tail call void @llvm.dbg.value(metadata !{i16 %p_jinfo_image_height}, i64 0, metadata !118), !dbg !533
+  tail call void @llvm.dbg.value(metadata !{i32 %p_jinfo_MCUWidth}, i64 0, metadata !119), !dbg !533
+  %1 = load i32* %p_out_vpos, align 4, !dbg !534, !tbaa !447
+  %2 = shl nsw i32 %1, 3, !dbg !534
+  tail call void @llvm.dbg.value(metadata !{i32 %2}, i64 0, metadata !120), !dbg !534
+  %3 = load i32* %p_out_hpos, align 4, !dbg !535, !tbaa !447
+  %4 = shl nsw i32 %3, 3, !dbg !535
+  tail call void @llvm.dbg.value(metadata !{i32 %4}, i64 0, metadata !121), !dbg !535
+  %5 = sext i16 %p_jinfo_image_width to i32, !dbg !536
+  %6 = sext i16 %p_jinfo_image_height to i32, !dbg !536
+  tail call void @WriteOneBlock_f2r_WriteOneBlock(i32* %store, i8* %p_out_buf, i32 %5, i32 %6, i32 %2, i32 %4) #4, !dbg !536
+  %7 = load i32* %p_out_hpos, align 4, !dbg !537, !tbaa !447
+  %8 = add nsw i32 %7, 1, !dbg !537
+  store i32 %8, i32* %p_out_hpos, align 4, !dbg !537, !tbaa !447
+  %9 = load i32* %p_out_vpos, align 4, !dbg !538, !tbaa !447
+  %10 = add nsw i32 %9, 1, !dbg !538
+  store i32 %10, i32* %p_out_vpos, align 4, !dbg !538, !tbaa !447
+  %11 = load i32* %p_out_hpos, align 4, !dbg !539, !tbaa !447
+  %12 = icmp slt i32 %11, %p_jinfo_MCUWidth, !dbg !539
+  br i1 %12, label %13, label %14, !dbg !539
+
+; <label>:13                                      ; preds = %0
+  store i32 %9, i32* %p_out_vpos, align 4, !dbg !541, !tbaa !447
+  br label %15, !dbg !543
+
+; <label>:14                                      ; preds = %0
+  store i32 0, i32* %p_out_hpos, align 4, !dbg !544, !tbaa !447
+  br label %15
+
+; <label>:15                                      ; preds = %14, %13
+  ret void, !dbg !546
+}
+
+; Function Attrs: nounwind uwtable
+define void @Write4Blocks_f2r_entry_s2e_WriteOneBlockExit(i32* nocapture readonly %store, i8* nocapture %out_buf, i32 %width, i32 %height, i32* %voffs, i32* %hoffs, i32* nocapture readonly %p_out_vpos, i32* nocapture readonly %p_out_hpos) #0 {
+  tail call void @llvm.dbg.value(metadata !{i32* %store}, i64 0, metadata !126), !dbg !547
+  tail call void @llvm.dbg.value(metadata !{i8* %out_buf}, i64 0, metadata !127), !dbg !547
+  tail call void @llvm.dbg.value(metadata !{i32 %width}, i64 0, metadata !128), !dbg !547
+  tail call void @llvm.dbg.value(metadata !{i32 %height}, i64 0, metadata !129), !dbg !547
+  tail call void @llvm.dbg.value(metadata !{i32* %voffs}, i64 0, metadata !130), !dbg !548
+  tail call void @llvm.dbg.value(metadata !{i32* %hoffs}, i64 0, metadata !131), !dbg !548
+  tail call void @llvm.dbg.value(metadata !{i32* %p_out_vpos}, i64 0, metadata !132), !dbg !548
+  tail call void @llvm.dbg.value(metadata !{i32* %p_out_hpos}, i64 0, metadata !133), !dbg !548
+  %1 = load i32* %p_out_vpos, align 4, !dbg !549, !tbaa !447
+  %2 = shl nsw i32 %1, 3, !dbg !549
+  store i32 %2, i32* %voffs, align 4, !dbg !549, !tbaa !447
+  %3 = load i32* %p_out_hpos, align 4, !dbg !550, !tbaa !447
+  %4 = shl nsw i32 %3, 3, !dbg !550
+  store i32 %4, i32* %hoffs, align 4, !dbg !550, !tbaa !447
+  %5 = ptrtoint i32* %voffs to i64, !dbg !551
+  %6 = trunc i64 %5 to i32, !dbg !551
+  tail call void @llvm.dbg.value(metadata !{i32 %6}, i64 0, metadata !134), !dbg !551
+  %sext = shl i64 %5, 32, !dbg !551
+  %7 = ashr exact i64 %sext, 32, !dbg !551
+  %8 = inttoptr i64 %7 to i32*, !dbg !551
+  %9 = getelementptr inbounds i32* %voffs, i64 8, !dbg !551
+  %10 = icmp ult i32* %8, %9, !dbg !551
+  %11 = icmp slt i32 %6, %height, !dbg !552
+  %or.cond5 = and i1 %10, %11, !dbg !551
+  br i1 %or.cond5, label %.lr.ph9, label %._crit_edge10, !dbg !551
+
+.lr.ph9:                                          ; preds = %0
+  %12 = ptrtoint i32* %hoffs to i64, !dbg !553
+  %13 = trunc i64 %12 to i32, !dbg !553
+  %sext11 = shl i64 %12, 32, !dbg !553
+  %14 = ashr exact i64 %sext11, 32, !dbg !553
+  %15 = inttoptr i64 %14 to i32*, !dbg !553
+  %16 = getelementptr inbounds i32* %hoffs, i64 8, !dbg !553
+  %17 = icmp ult i32* %15, %16, !dbg !553
+  %18 = icmp slt i32 %13, %width, !dbg !555
+  %or.cond12 = and i1 %17, %18, !dbg !553
+  %sext14 = shl i64 %12, 32
+  %19 = ashr exact i64 %sext14, 32
+  %sext15 = shl i64 %5, 32
+  %20 = ashr exact i64 %sext15, 32
+  br label %21, !dbg !551
+
+; <label>:21                                      ; preds = %.lr.ph9, %._crit_edge
+  %indvars.iv12 = phi i64 [ %20, %.lr.ph9 ], [ %indvars.iv.next13, %._crit_edge ]
+  %.07 = phi i32* [ %store, %.lr.ph9 ], [ %.1.lcssa, %._crit_edge ]
+  %22 = tail call i32 (i8*, ...)* @printf(i8* getelementptr inbounds ([20 x i8]* @.str, i64 0, i64 0)) #5, !dbg !558
+  tail call void @llvm.dbg.value(metadata !{i32 %24}, i64 0, metadata !136), !dbg !559
+  tail call void @llvm.dbg.value(metadata !{i32 %13}, i64 0, metadata !135), !dbg !553
+  br i1 %or.cond12, label %.lr.ph, label %._crit_edge, !dbg !553
+
+.lr.ph:                                           ; preds = %21
+  %23 = trunc i64 %indvars.iv12 to i32, !dbg !559
+  %24 = mul nsw i32 %23, %width, !dbg !559
+  %25 = sext i32 %24 to i64, !dbg !553
+  br label %26, !dbg !553
+
+; <label>:26                                      ; preds = %.lr.ph, %26
+  %indvars.iv = phi i64 [ %19, %.lr.ph ], [ %indvars.iv.next, %26 ]
+  %.14 = phi i32* [ %.07, %.lr.ph ], [ %27, %26 ]
+  %27 = getelementptr inbounds i32* %.14, i64 1, !dbg !560
+  tail call void @llvm.dbg.value(metadata !{i32* %27}, i64 0, metadata !126), !dbg !560
+  %28 = load i32* %.14, align 4, !dbg !560, !tbaa !447
+  %29 = trunc i32 %28 to i8, !dbg !560
+  %30 = add nsw i64 %indvars.iv, %25, !dbg !560
+  %31 = getelementptr inbounds i8* %out_buf, i64 %30, !dbg !560
+  store i8 %29, i8* %31, align 1, !dbg !560, !tbaa !500
+  %indvars.iv.next = add nsw i64 %indvars.iv, 1, !dbg !553
+  %32 = inttoptr i64 %indvars.iv.next to i32*, !dbg !553
+  %33 = icmp ult i32* %32, %16, !dbg !553
+  %34 = trunc i64 %indvars.iv.next to i32, !dbg !555
+  %35 = icmp slt i32 %34, %width, !dbg !555
+  %or.cond1 = and i1 %33, %35, !dbg !553
+  br i1 %or.cond1, label %26, label %._crit_edge, !dbg !553
+
+._crit_edge:                                      ; preds = %26, %21
+  %.1.lcssa = phi i32* [ %.07, %21 ], [ %27, %26 ]
+  %indvars.iv.next13 = add nsw i64 %indvars.iv12, 1, !dbg !551
+  %36 = inttoptr i64 %indvars.iv.next13 to i32*, !dbg !551
+  %37 = icmp ult i32* %36, %9, !dbg !551
+  %38 = trunc i64 %indvars.iv.next13 to i32, !dbg !552
+  %39 = icmp slt i32 %38, %height, !dbg !552
+  %or.cond = and i1 %37, %39, !dbg !551
+  br i1 %or.cond, label %21, label %._crit_edge10, !dbg !551
+
+._crit_edge10:                                    ; preds = %._crit_edge, %0
+  ret void, !dbg !562
+}
+
+declare i32 @printf(i8*, ...) #2
+
+; Function Attrs: nounwind uwtable
+define void @Write4Blocks_f2r_WriteOneBlockExit_s2e_WriteOneBlockExit121(i32* nocapture readonly %store, i8* nocapture %out_buf, i32 %width, i32 %height, i32* nocapture readonly %voffs, i32* nocapture %hoffs) #0 {
+  tail call void @llvm.dbg.value(metadata !{i32* %store}, i64 0, metadata !145), !dbg !563
+  tail call void @llvm.dbg.value(metadata !{i8* %out_buf}, i64 0, metadata !146), !dbg !563
+  tail call void @llvm.dbg.value(metadata !{i32 %width}, i64 0, metadata !147), !dbg !563
+  tail call void @llvm.dbg.value(metadata !{i32 %height}, i64 0, metadata !148), !dbg !563
+  tail call void @llvm.dbg.value(metadata !{i32* %voffs}, i64 0, metadata !149), !dbg !564
+  tail call void @llvm.dbg.value(metadata !{i32* %hoffs}, i64 0, metadata !150), !dbg !564
+  %1 = load i32* %hoffs, align 4, !dbg !565, !tbaa !447
+  %2 = add nsw i32 %1, 8, !dbg !565
+  store i32 %2, i32* %hoffs, align 4, !dbg !565, !tbaa !447
+  %3 = load i16* @p_jinfo_image_width, align 2, !dbg !566, !tbaa !567
+  %4 = sext i16 %3 to i32, !dbg !566
+  %5 = load i16* @p_jinfo_image_height, align 2, !dbg !566, !tbaa !567
+  %6 = sext i16 %5 to i32, !dbg !566
+  %7 = load i32* %voffs, align 4, !dbg !566, !tbaa !447
+  tail call void @WriteOneBlock_f2r_WriteOneBlock(i32* %store, i8* %out_buf, i32 %4, i32 %6, i32 %7, i32 %2) #4, !dbg !566
+  ret void, !dbg !569
+}
+
+; Function Attrs: nounwind uwtable
+define void @Write4Blocks_f2r_WriteOneBlockExit121_s2e_WriteOneBlockExit93(i32* nocapture readonly %store, i8* nocapture %out_buf, i32 %width, i32 %height, i32* nocapture %voffs, i32* nocapture %hoffs) #0 {
+  tail call void @llvm.dbg.value(metadata !{i32* %store}, i64 0, metadata !153), !dbg !570
+  tail call void @llvm.dbg.value(metadata !{i8* %out_buf}, i64 0, metadata !154), !dbg !570
+  tail call void @llvm.dbg.value(metadata !{i32 %width}, i64 0, metadata !155), !dbg !570
+  tail call void @llvm.dbg.value(metadata !{i32 %height}, i64 0, metadata !156), !dbg !570
+  tail call void @llvm.dbg.value(metadata !{i32* %voffs}, i64 0, metadata !157), !dbg !571
+  tail call void @llvm.dbg.value(metadata !{i32* %hoffs}, i64 0, metadata !158), !dbg !571
+  %1 = load i32* %voffs, align 4, !dbg !572, !tbaa !447
+  %2 = add nsw i32 %1, 8, !dbg !572
+  store i32 %2, i32* %voffs, align 4, !dbg !572, !tbaa !447
+  %3 = load i32* %hoffs, align 4, !dbg !573, !tbaa !447
+  %4 = add nsw i32 %3, -8, !dbg !573
+  store i32 %4, i32* %hoffs, align 4, !dbg !573, !tbaa !447
+  %5 = load i16* @p_jinfo_image_width, align 2, !dbg !574, !tbaa !567
+  %6 = sext i16 %5 to i32, !dbg !574
+  %7 = load i16* @p_jinfo_image_height, align 2, !dbg !574, !tbaa !567
+  %8 = sext i16 %7 to i32, !dbg !574
+  %9 = load i32* %voffs, align 4, !dbg !574, !tbaa !447
+  tail call void @WriteOneBlock_f2r_WriteOneBlock(i32* %store, i8* %out_buf, i32 %6, i32 %8, i32 %9, i32 %4) #4, !dbg !574
+  ret void, !dbg !575
+}
+
+; Function Attrs: nounwind uwtable
+define void @Write4Blocks_f2r_WriteOneBlockExit93_s2e_WriteOneBlockExit65(i32* nocapture readonly %store, i8* nocapture %out_buf, i32 %width, i32 %height, i32* nocapture readonly %voffs, i32* nocapture %hoffs) #0 {
+  tail call void @llvm.dbg.value(metadata !{i32* %store}, i64 0, metadata !161), !dbg !576
+  tail call void @llvm.dbg.value(metadata !{i8* %out_buf}, i64 0, metadata !162), !dbg !576
+  tail call void @llvm.dbg.value(metadata !{i32 %width}, i64 0, metadata !163), !dbg !576
+  tail call void @llvm.dbg.value(metadata !{i32 %height}, i64 0, metadata !164), !dbg !576
+  tail call void @llvm.dbg.value(metadata !{i32* %voffs}, i64 0, metadata !165), !dbg !577
+  tail call void @llvm.dbg.value(metadata !{i32* %hoffs}, i64 0, metadata !166), !dbg !577
+  %1 = load i32* %hoffs, align 4, !dbg !578, !tbaa !447
+  %2 = add nsw i32 %1, 8, !dbg !578
+  store i32 %2, i32* %hoffs, align 4, !dbg !578, !tbaa !447
+  %3 = load i16* @p_jinfo_image_width, align 2, !dbg !579, !tbaa !567
+  %4 = sext i16 %3 to i32, !dbg !579
+  %5 = load i16* @p_jinfo_image_height, align 2, !dbg !579, !tbaa !567
+  %6 = sext i16 %5 to i32, !dbg !579
+  %7 = load i32* %voffs, align 4, !dbg !579, !tbaa !447
+  tail call void @WriteOneBlock_f2r_WriteOneBlock(i32* %store, i8* %out_buf, i32 %4, i32 %6, i32 %7, i32 %2) #4, !dbg !579
+  ret void, !dbg !580
+}
+
+; Function Attrs: nounwind uwtable
+define void @Write4Blocks_f2r_Write4Blocks(i32* nocapture readonly %store1, i32* nocapture readonly %store2, i32* nocapture readonly %store3, i32* nocapture readonly %store4, i32* nocapture %p_out_vpos, i32* nocapture %p_out_hpos, i8* nocapture %p_out_buf, i16 signext %p_jinfo_image_width, i16 signext %p_jinfo_image_height, i32 %p_jinfo_MCUWidth) #0 {
+  %voffs = alloca i32, align 4
+  %hoffs = alloca i32, align 4
+  call void @llvm.dbg.value(metadata !{i32* %store1}, i64 0, metadata !171), !dbg !581
+  call void @llvm.dbg.value(metadata !{i32* %store2}, i64 0, metadata !172), !dbg !581
+  call void @llvm.dbg.value(metadata !{i32* %store3}, i64 0, metadata !173), !dbg !581
+  call void @llvm.dbg.value(metadata !{i32* %store4}, i64 0, metadata !174), !dbg !581
+  call void @llvm.dbg.value(metadata !{i32* %p_out_vpos}, i64 0, metadata !175), !dbg !582
+  call void @llvm.dbg.value(metadata !{i32* %p_out_hpos}, i64 0, metadata !176), !dbg !582
+  call void @llvm.dbg.value(metadata !{i8* %p_out_buf}, i64 0, metadata !177), !dbg !582
+  call void @llvm.dbg.value(metadata !{i16 %p_jinfo_image_width}, i64 0, metadata !178), !dbg !583
+  call void @llvm.dbg.value(metadata !{i16 %p_jinfo_image_height}, i64 0, metadata !179), !dbg !583
+  call void @llvm.dbg.value(metadata !{i32 %p_jinfo_MCUWidth}, i64 0, metadata !180), !dbg !583
+  call void @llvm.dbg.declare(metadata !{i32* %voffs}, metadata !181), !dbg !584
+  call void @llvm.dbg.declare(metadata !{i32* %hoffs}, metadata !182), !dbg !584
+  %1 = sext i16 %p_jinfo_image_width to i32, !dbg !585
+  %2 = sext i16 %p_jinfo_image_height to i32, !dbg !585
+  call void @Write4Blocks_f2r_entry_s2e_WriteOneBlockExit(i32* %store1, i8* %p_out_buf, i32 %1, i32 %2, i32* %voffs, i32* %hoffs, i32* %p_out_vpos, i32* %p_out_hpos) #4, !dbg !585
+  call void @Write4Blocks_f2r_WriteOneBlockExit_s2e_WriteOneBlockExit121(i32* %store2, i8* %p_out_buf, i32 undef, i32 undef, i32* %voffs, i32* %hoffs) #4, !dbg !586
+  call void @Write4Blocks_f2r_WriteOneBlockExit121_s2e_WriteOneBlockExit93(i32* %store3, i8* %p_out_buf, i32 undef, i32 undef, i32* %voffs, i32* %hoffs) #4, !dbg !587
+  call void @Write4Blocks_f2r_WriteOneBlockExit93_s2e_WriteOneBlockExit65(i32* %store4, i8* %p_out_buf, i32 undef, i32 undef, i32* %voffs, i32* %hoffs) #4, !dbg !588
+  %3 = load i32* %p_out_hpos, align 4, !dbg !589, !tbaa !447
+  %4 = add nsw i32 %3, 2, !dbg !589
+  store i32 %4, i32* %p_out_hpos, align 4, !dbg !589, !tbaa !447
+  %5 = load i32* %p_out_vpos, align 4, !dbg !590, !tbaa !447
+  %6 = add nsw i32 %5, 2, !dbg !590
+  store i32 %6, i32* %p_out_vpos, align 4, !dbg !590, !tbaa !447
+  %7 = load i32* %p_out_hpos, align 4, !dbg !591, !tbaa !447
+  %8 = icmp slt i32 %7, %p_jinfo_MCUWidth, !dbg !591
+  br i1 %8, label %9, label %10, !dbg !591
+
+; <label>:9                                       ; preds = %0
+  store i32 %5, i32* %p_out_vpos, align 4, !dbg !593, !tbaa !447
+  br label %11, !dbg !595
+
+; <label>:10                                      ; preds = %0
+  store i32 0, i32* %p_out_hpos, align 4, !dbg !596, !tbaa !447
+  br label %11
+
+; <label>:11                                      ; preds = %10, %9
+  ret void, !dbg !598
+}
+
+; Function Attrs: nounwind uwtable
+define void @YuvToRgb_f2r_forBody(i32 %p, i32* nocapture readonly %y_buf, i32* nocapture readonly %u_buf, i32* nocapture readonly %v_buf, [3 x [64 x i32]]* nocapture %rgb_buf, i32* nocapture %r, i32* nocapture %g, i32* nocapture %b, i32* nocapture %y, i32* nocapture %u, i32* nocapture %v, i32 %i) #0 {
+  tail call void @llvm.dbg.value(metadata !{i32 %p}, i64 0, metadata !192), !dbg !599
+  tail call void @llvm.dbg.value(metadata !{i32* %y_buf}, i64 0, metadata !193), !dbg !599
+  tail call void @llvm.dbg.value(metadata !{i32* %u_buf}, i64 0, metadata !194), !dbg !599
+  tail call void @llvm.dbg.value(metadata !{i32* %v_buf}, i64 0, metadata !195), !dbg !599
+  tail call void @llvm.dbg.value(metadata !{[3 x [64 x i32]]* %rgb_buf}, i64 0, metadata !196), !dbg !599
+  tail call void @llvm.dbg.value(metadata !{i32* %r}, i64 0, metadata !197), !dbg !600
+  tail call void @llvm.dbg.value(metadata !{i32* %g}, i64 0, metadata !198), !dbg !600
+  tail call void @llvm.dbg.value(metadata !{i32* %b}, i64 0, metadata !199), !dbg !600
+  tail call void @llvm.dbg.value(metadata !{i32* %y}, i64 0, metadata !200), !dbg !600
+  tail call void @llvm.dbg.value(metadata !{i32* %u}, i64 0, metadata !201), !dbg !600
+  tail call void @llvm.dbg.value(metadata !{i32* %v}, i64 0, metadata !202), !dbg !600
+  tail call void @llvm.dbg.value(metadata !{i32 %i}, i64 0, metadata !203), !dbg !600
+  %1 = sext i32 %i to i64, !dbg !601
+  %2 = getelementptr inbounds i32* %y_buf, i64 %1, !dbg !601
+  %3 = load i32* %2, align 4, !dbg !601, !tbaa !447
+  store i32 %3, i32* %y, align 4, !dbg !601, !tbaa !447
+  %4 = getelementptr inbounds i32* %u_buf, i64 %1, !dbg !602
+  %5 = load i32* %4, align 4, !dbg !602, !tbaa !447
+  %6 = add nsw i32 %5, -128, !dbg !602
+  store i32 %6, i32* %u, align 4, !dbg !602, !tbaa !447
+  %7 = getelementptr inbounds i32* %v_buf, i64 %1, !dbg !603
+  %8 = load i32* %7, align 4, !dbg !603, !tbaa !447
+  %9 = add nsw i32 %8, -128, !dbg !603
+  store i32 %9, i32* %v, align 4, !dbg !603, !tbaa !447
+  %10 = load i32* %y, align 4, !dbg !604, !tbaa !447
+  %11 = shl i32 %10, 8, !dbg !604
+  %12 = mul nsw i32 %9, 359, !dbg !604
+  %13 = add i32 %12, 128, !dbg !604
+  %14 = add i32 %13, %11, !dbg !604
+  %15 = ashr i32 %14, 8, !dbg !604
+  store i32 %15, i32* %r, align 4, !dbg !604, !tbaa !447
+  %16 = load i32* %y, align 4, !dbg !605, !tbaa !447
+  %17 = shl i32 %16, 8, !dbg !605
+  %18 = load i32* %u, align 4, !dbg !605, !tbaa !447
+  %19 = mul i32 %18, -88, !dbg !605
+  %20 = load i32* %v, align 4, !dbg !605, !tbaa !447
+  %21 = mul i32 %20, -182, !dbg !605
+  %22 = or i32 %17, 128, !dbg !605
+  %23 = add i32 %22, %19, !dbg !605
+  %24 = add i32 %23, %21, !dbg !605
+  %25 = ashr i32 %24, 8, !dbg !605
+  store i32 %25, i32* %g, align 4, !dbg !605, !tbaa !447
+  %26 = load i32* %y, align 4, !dbg !606, !tbaa !447
+  %27 = shl i32 %26, 8, !dbg !606
+  %28 = load i32* %u, align 4, !dbg !606, !tbaa !447
+  %29 = mul nsw i32 %28, 454, !dbg !606
+  %30 = or i32 %27, 128, !dbg !606
+  %31 = add i32 %30, %29, !dbg !606
+  %32 = ashr i32 %31, 8, !dbg !606
+  store i32 %32, i32* %b, align 4, !dbg !606, !tbaa !447
+  %33 = load i32* %r, align 4, !dbg !607, !tbaa !447
+  %34 = icmp slt i32 %33, 0, !dbg !607
+  br i1 %34, label %35, label %36, !dbg !607
+
+; <label>:35                                      ; preds = %0
+  store i32 0, i32* %r, align 4, !dbg !609, !tbaa !447
+  br label %39, !dbg !609
+
+; <label>:36                                      ; preds = %0
+  %37 = icmp sgt i32 %33, 255, !dbg !610
+  br i1 %37, label %38, label %39, !dbg !610
+
+; <label>:38                                      ; preds = %36
+  store i32 255, i32* %r, align 4, !dbg !612, !tbaa !447
+  br label %39, !dbg !612
+
+; <label>:39                                      ; preds = %36, %38, %35
+  %40 = load i32* %g, align 4, !dbg !613, !tbaa !447
+  %41 = icmp slt i32 %40, 0, !dbg !613
+  br i1 %41, label %42, label %43, !dbg !613
+
+; <label>:42                                      ; preds = %39
+  store i32 0, i32* %g, align 4, !dbg !615, !tbaa !447
+  br label %46, !dbg !615
+
+; <label>:43                                      ; preds = %39
+  %44 = icmp sgt i32 %40, 255, !dbg !616
+  br i1 %44, label %45, label %46, !dbg !616
+
+; <label>:45                                      ; preds = %43
+  store i32 255, i32* %g, align 4, !dbg !618, !tbaa !447
+  br label %46, !dbg !618
+
+; <label>:46                                      ; preds = %43, %45, %42
+  %47 = load i32* %b, align 4, !dbg !619, !tbaa !447
+  %48 = icmp slt i32 %47, 0, !dbg !619
+  br i1 %48, label %49, label %50, !dbg !619
+
+; <label>:49                                      ; preds = %46
+  store i32 0, i32* %b, align 4, !dbg !621, !tbaa !447
+  br label %53, !dbg !621
+
+; <label>:50                                      ; preds = %46
+  %51 = icmp sgt i32 %47, 255, !dbg !622
+  br i1 %51, label %52, label %53, !dbg !622
+
+; <label>:52                                      ; preds = %50
+  store i32 255, i32* %b, align 4, !dbg !624, !tbaa !447
+  br label %53, !dbg !624
+
+; <label>:53                                      ; preds = %50, %52, %49
+  %54 = load i32* %r, align 4, !dbg !625, !tbaa !447
+  %55 = sext i32 %p to i64, !dbg !625
+  %56 = getelementptr inbounds [3 x [64 x i32]]* %rgb_buf, i64 %55, i64 0, i64 %1, !dbg !625
+  store i32 %54, i32* %56, align 4, !dbg !625, !tbaa !447
+  %57 = load i32* %g, align 4, !dbg !626, !tbaa !447
+  %58 = getelementptr inbounds [3 x [64 x i32]]* %rgb_buf, i64 %55, i64 1, i64 %1, !dbg !626
+  store i32 %57, i32* %58, align 4, !dbg !626, !tbaa !447
+  %59 = load i32* %b, align 4, !dbg !627, !tbaa !447
+  %60 = getelementptr inbounds [3 x [64 x i32]]* %rgb_buf, i64 %55, i64 2, i64 %1, !dbg !627
+  store i32 %59, i32* %60, align 4, !dbg !627, !tbaa !447
+  ret void, !dbg !628
+}
+
+; Function Attrs: nounwind uwtable
+define void @YuvToRgb_f2r_forBody_s2e_forEndLoopexit(i32 %p, i32* nocapture readonly %y_buf, i32* nocapture readonly %u_buf, i32* nocapture readonly %v_buf, [3 x [64 x i32]]* nocapture %rgb_buf, i32* nocapture %r, i32* nocapture %g, i32* nocapture %b, i32* nocapture %y, i32* nocapture %u, i32* nocapture %v) #0 {
+  tail call void @llvm.dbg.value(metadata !{i32 %p}, i64 0, metadata !208), !dbg !629
+  tail call void @llvm.dbg.value(metadata !{i32* %y_buf}, i64 0, metadata !209), !dbg !629
+  tail call void @llvm.dbg.value(metadata !{i32* %u_buf}, i64 0, metadata !210), !dbg !629
+  tail call void @llvm.dbg.value(metadata !{i32* %v_buf}, i64 0, metadata !211), !dbg !629
+  tail call void @llvm.dbg.value(metadata !{[3 x [64 x i32]]* %rgb_buf}, i64 0, metadata !212), !dbg !629
+  tail call void @llvm.dbg.value(metadata !{i32* %r}, i64 0, metadata !213), !dbg !630
+  tail call void @llvm.dbg.value(metadata !{i32* %g}, i64 0, metadata !214), !dbg !630
+  tail call void @llvm.dbg.value(metadata !{i32* %b}, i64 0, metadata !215), !dbg !630
+  tail call void @llvm.dbg.value(metadata !{i32* %y}, i64 0, metadata !216), !dbg !630
+  tail call void @llvm.dbg.value(metadata !{i32* %u}, i64 0, metadata !217), !dbg !630
+  tail call void @llvm.dbg.value(metadata !{i32* %v}, i64 0, metadata !218), !dbg !630
+  tail call void @llvm.dbg.value(metadata !2, i64 0, metadata !219), !dbg !631
+  %1 = sext i32 %p to i64, !dbg !633
+  br label %2, !dbg !631
+
+; <label>:2                                       ; preds = %54, %0
+  %indvars.iv = phi i64 [ 0, %0 ], [ %indvars.iv.next, %54 ]
+  %3 = getelementptr inbounds i32* %y_buf, i64 %indvars.iv, !dbg !635
+  %4 = load i32* %3, align 4, !dbg !635, !tbaa !447
+  store i32 %4, i32* %y, align 4, !dbg !635, !tbaa !447
+  %5 = getelementptr inbounds i32* %u_buf, i64 %indvars.iv, !dbg !636
+  %6 = load i32* %5, align 4, !dbg !636, !tbaa !447
+  %7 = add nsw i32 %6, -128, !dbg !636
+  store i32 %7, i32* %u, align 4, !dbg !636, !tbaa !447
+  %8 = getelementptr inbounds i32* %v_buf, i64 %indvars.iv, !dbg !637
+  %9 = load i32* %8, align 4, !dbg !637, !tbaa !447
+  %10 = add nsw i32 %9, -128, !dbg !637
+  store i32 %10, i32* %v, align 4, !dbg !637, !tbaa !447
+  %11 = load i32* %y, align 4, !dbg !638, !tbaa !447
+  %12 = shl i32 %11, 8, !dbg !638
+  %13 = mul nsw i32 %10, 359, !dbg !638
+  %14 = add i32 %13, 128, !dbg !638
+  %15 = add i32 %14, %12, !dbg !638
+  %16 = ashr i32 %15, 8, !dbg !638
+  store i32 %16, i32* %r, align 4, !dbg !638, !tbaa !447
+  %17 = load i32* %y, align 4, !dbg !639, !tbaa !447
+  %18 = shl i32 %17, 8, !dbg !639
+  %19 = load i32* %u, align 4, !dbg !639, !tbaa !447
+  %20 = mul i32 %19, -88, !dbg !639
+  %21 = load i32* %v, align 4, !dbg !639, !tbaa !447
+  %22 = mul i32 %21, -182, !dbg !639
+  %23 = or i32 %18, 128, !dbg !639
+  %24 = add i32 %23, %20, !dbg !639
+  %25 = add i32 %24, %22, !dbg !639
+  %26 = ashr i32 %25, 8, !dbg !639
+  store i32 %26, i32* %g, align 4, !dbg !639, !tbaa !447
+  %27 = load i32* %y, align 4, !dbg !640, !tbaa !447
+  %28 = shl i32 %27, 8, !dbg !640
+  %29 = load i32* %u, align 4, !dbg !640, !tbaa !447
+  %30 = mul nsw i32 %29, 454, !dbg !640
+  %31 = or i32 %28, 128, !dbg !640
+  %32 = add i32 %31, %30, !dbg !640
+  %33 = ashr i32 %32, 8, !dbg !640
+  store i32 %33, i32* %b, align 4, !dbg !640, !tbaa !447
+  %34 = load i32* %r, align 4, !dbg !641, !tbaa !447
+  %35 = icmp slt i32 %34, 0, !dbg !641
+  br i1 %35, label %36, label %37, !dbg !641
+
+; <label>:36                                      ; preds = %2
+  store i32 0, i32* %r, align 4, !dbg !643, !tbaa !447
+  br label %40, !dbg !643
+
+; <label>:37                                      ; preds = %2
+  %38 = icmp sgt i32 %34, 255, !dbg !644
+  br i1 %38, label %39, label %40, !dbg !644
+
+; <label>:39                                      ; preds = %37
+  store i32 255, i32* %r, align 4, !dbg !646, !tbaa !447
+  br label %40, !dbg !646
+
+; <label>:40                                      ; preds = %37, %39, %36
+  %41 = load i32* %g, align 4, !dbg !647, !tbaa !447
+  %42 = icmp slt i32 %41, 0, !dbg !647
+  br i1 %42, label %43, label %44, !dbg !647
+
+; <label>:43                                      ; preds = %40
+  store i32 0, i32* %g, align 4, !dbg !649, !tbaa !447
+  br label %47, !dbg !649
+
+; <label>:44                                      ; preds = %40
+  %45 = icmp sgt i32 %41, 255, !dbg !650
+  br i1 %45, label %46, label %47, !dbg !650
+
+; <label>:46                                      ; preds = %44
+  store i32 255, i32* %g, align 4, !dbg !652, !tbaa !447
+  br label %47, !dbg !652
+
+; <label>:47                                      ; preds = %44, %46, %43
+  %48 = load i32* %b, align 4, !dbg !653, !tbaa !447
+  %49 = icmp slt i32 %48, 0, !dbg !653
+  br i1 %49, label %50, label %51, !dbg !653
+
+; <label>:50                                      ; preds = %47
+  store i32 0, i32* %b, align 4, !dbg !655, !tbaa !447
+  br label %54, !dbg !655
+
+; <label>:51                                      ; preds = %47
+  %52 = icmp sgt i32 %48, 255, !dbg !656
+  br i1 %52, label %53, label %54, !dbg !656
+
+; <label>:53                                      ; preds = %51
+  store i32 255, i32* %b, align 4, !dbg !658, !tbaa !447
+  br label %54, !dbg !658
+
+; <label>:54                                      ; preds = %51, %53, %50
+  %55 = load i32* %r, align 4, !dbg !633, !tbaa !447
+  %56 = getelementptr inbounds [3 x [64 x i32]]* %rgb_buf, i64 %1, i64 0, i64 %indvars.iv, !dbg !633
+  store i32 %55, i32* %56, align 4, !dbg !633, !tbaa !447
+  %57 = load i32* %g, align 4, !dbg !659, !tbaa !447
+  %58 = getelementptr inbounds [3 x [64 x i32]]* %rgb_buf, i64 %1, i64 1, i64 %indvars.iv, !dbg !659
+  store i32 %57, i32* %58, align 4, !dbg !659, !tbaa !447
+  %59 = load i32* %b, align 4, !dbg !660, !tbaa !447
+  %60 = getelementptr inbounds [3 x [64 x i32]]* %rgb_buf, i64 %1, i64 2, i64 %indvars.iv, !dbg !660
+  store i32 %59, i32* %60, align 4, !dbg !660, !tbaa !447
+  %indvars.iv.next = add nuw nsw i64 %indvars.iv, 1, !dbg !631
+  %exitcond = icmp eq i64 %indvars.iv.next, 64, !dbg !631
+  br i1 %exitcond, label %61, label %2, !dbg !631
+
+; <label>:61                                      ; preds = %54
+  ret void, !dbg !661
+}
+
+; Function Attrs: nounwind uwtable
+define void @YuvToRgb_f2r_entry_s2e_forEnd(i32 %p, i32* nocapture readonly %y_buf, i32* nocapture readonly %u_buf, i32* nocapture readonly %v_buf, [3 x [64 x i32]]* nocapture %rgb_buf) #0 {
+  %r = alloca i32, align 4
+  %g = alloca i32, align 4
+  %b = alloca i32, align 4
+  %y = alloca i32, align 4
+  %u = alloca i32, align 4
+  %v = alloca i32, align 4
+  tail call void @llvm.dbg.value(metadata !{i32 %p}, i64 0, metadata !224), !dbg !662
+  tail call void @llvm.dbg.value(metadata !{i32* %y_buf}, i64 0, metadata !225), !dbg !662
+  tail call void @llvm.dbg.value(metadata !{i32* %u_buf}, i64 0, metadata !226), !dbg !662
+  tail call void @llvm.dbg.value(metadata !{i32* %v_buf}, i64 0, metadata !227), !dbg !662
+  tail call void @llvm.dbg.value(metadata !{[3 x [64 x i32]]* %rgb_buf}, i64 0, metadata !228), !dbg !662
+  tail call void @llvm.dbg.declare(metadata !{i32* %r}, metadata !229), !dbg !663
+  tail call void @llvm.dbg.declare(metadata !{i32* %g}, metadata !230), !dbg !663
+  tail call void @llvm.dbg.declare(metadata !{i32* %b}, metadata !231), !dbg !663
+  tail call void @llvm.dbg.declare(metadata !{i32* %y}, metadata !232), !dbg !664
+  tail call void @llvm.dbg.declare(metadata !{i32* %u}, metadata !233), !dbg !664
+  tail call void @llvm.dbg.declare(metadata !{i32* %v}, metadata !234), !dbg !664
+  call void @YuvToRgb_f2r_forBody_s2e_forEndLoopexit(i32 %p, i32* %y_buf, i32* %u_buf, i32* %v_buf, [3 x [64 x i32]]* %rgb_buf, i32* %r, i32* %g, i32* %b, i32* %y, i32* %u, i32* %v) #4, !dbg !665
+  ret void, !dbg !666
+}
+
+; Function Attrs: nounwind uwtable
+define void @YuvToRgb_f2r_YuvToRgb(i32 %p, i32* nocapture readonly %y_buf, i32* nocapture readonly %u_buf, i32* nocapture readonly %v_buf, [3 x [64 x i32]]* nocapture %rgb_buf) #0 {
+  tail call void @llvm.dbg.value(metadata !{i32 %p}, i64 0, metadata !237), !dbg !667
+  tail call void @llvm.dbg.value(metadata !{i32* %y_buf}, i64 0, metadata !238), !dbg !667
+  tail call void @llvm.dbg.value(metadata !{i32* %u_buf}, i64 0, metadata !239), !dbg !667
+  tail call void @llvm.dbg.value(metadata !{i32* %v_buf}, i64 0, metadata !240), !dbg !667
+  tail call void @llvm.dbg.value(metadata !{[3 x [64 x i32]]* %rgb_buf}, i64 0, metadata !241), !dbg !667
+  tail call void @YuvToRgb_f2r_entry_s2e_forEnd(i32 %p, i32* %y_buf, i32* %u_buf, i32* %v_buf, [3 x [64 x i32]]* %rgb_buf) #4, !dbg !668
+  ret void, !dbg !669
+}
+
+; Function Attrs: nounwind uwtable
+define void @decode_block_f2r_forBodyI11_s2e_BoundIDctMatrixExit(i32* %out_buf, i32 %Bound) #0 {
+  tail call void @llvm.dbg.value(metadata !{i32* %out_buf}, i64 0, metadata !244), !dbg !670
+  tail call void @llvm.dbg.value(metadata !{i32 %Bound}, i64 0, metadata !245), !dbg !670
+  tail call void @BoundIDctMatrix_f2r_BoundIDctMatrix(i32* %out_buf, i32 %Bound) #4, !dbg !671
+  ret void, !dbg !672
+}
+
+; Function Attrs: nounwind uwtable
+define void @decode_block(i32 %comp_no, i32* %out_buf, i32* %HuffBuff, [64 x i32]* nocapture readonly %p_jinfo_quant_tbl_quantval, i8* nocapture readonly %p_jinfo_comps_info_quant_tbl_no, i8* %p_jinfo_comps_info_dc_tbl_no, [257 x i32]* %p_jinfo_dc_xhuff_tbl_huffval, i32* %p_jinfo_dc_dhuff_tbl_ml, [36 x i32]* %p_jinfo_dc_dhuff_tbl_maxcode, [36 x i32]* %p_jinfo_dc_dhuff_tbl_mincode, [36 x i32]* %p_jinfo_dc_dhuff_tbl_valptr, i8* %CurHuffReadBuf, [257 x i32]* %p_jinfo_ac_xhuff_tbl_huffval, i32* %p_jinfo_ac_dhuff_tbl_ml, [36 x i32]* %p_jinfo_ac_dhuff_tbl_maxcode, [36 x i32]* %p_jinfo_ac_dhuff_tbl_mincode, [36 x i32]* %p_jinfo_ac_dhuff_tbl_valptr) #0 {
+  %QuantBuff = alloca [64 x i32], align 16
+  call void @llvm.dbg.value(metadata !{i32 %comp_no}, i64 0, metadata !263), !dbg !673
+  call void @llvm.dbg.value(metadata !{i32* %out_buf}, i64 0, metadata !264), !dbg !673
+  call void @llvm.dbg.value(metadata !{i32* %HuffBuff}, i64 0, metadata !265), !dbg !673
+  call void @llvm.dbg.value(metadata !{[64 x i32]* %p_jinfo_quant_tbl_quantval}, i64 0, metadata !266), !dbg !673
+  call void @llvm.dbg.value(metadata !{i8* %p_jinfo_comps_info_quant_tbl_no}, i64 0, metadata !267), !dbg !673
+  call void @llvm.dbg.value(metadata !{i8* %p_jinfo_comps_info_dc_tbl_no}, i64 0, metadata !268), !dbg !674
+  call void @llvm.dbg.value(metadata !{[257 x i32]* %p_jinfo_dc_xhuff_tbl_huffval}, i64 0, metadata !269), !dbg !674
+  call void @llvm.dbg.value(metadata !{i32* %p_jinfo_dc_dhuff_tbl_ml}, i64 0, metadata !270), !dbg !675
+  call void @llvm.dbg.value(metadata !{[36 x i32]* %p_jinfo_dc_dhuff_tbl_maxcode}, i64 0, metadata !271), !dbg !675
+  call void @llvm.dbg.value(metadata !{[36 x i32]* %p_jinfo_dc_dhuff_tbl_mincode}, i64 0, metadata !272), !dbg !675
+  call void @llvm.dbg.value(metadata !{[36 x i32]* %p_jinfo_dc_dhuff_tbl_valptr}, i64 0, metadata !273), !dbg !675
+  call void @llvm.dbg.value(metadata !{i8* %CurHuffReadBuf}, i64 0, metadata !274), !dbg !676
+  call void @llvm.dbg.value(metadata !{[257 x i32]* %p_jinfo_ac_xhuff_tbl_huffval}, i64 0, metadata !275), !dbg !676
+  call void @llvm.dbg.value(metadata !{i32* %p_jinfo_ac_dhuff_tbl_ml}, i64 0, metadata !276), !dbg !676
+  call void @llvm.dbg.value(metadata !{[36 x i32]* %p_jinfo_ac_dhuff_tbl_maxcode}, i64 0, metadata !277), !dbg !676
+  call void @llvm.dbg.value(metadata !{[36 x i32]* %p_jinfo_ac_dhuff_tbl_mincode}, i64 0, metadata !278), !dbg !676
+  call void @llvm.dbg.value(metadata !{[36 x i32]* %p_jinfo_ac_dhuff_tbl_valptr}, i64 0, metadata !279), !dbg !677
+  %1 = bitcast [64 x i32]* %QuantBuff to i8*, !dbg !678
+  call void @llvm.lifetime.start(i64 256, i8* %1) #3, !dbg !678
+  call void @llvm.dbg.declare(metadata !{[64 x i32]* %QuantBuff}, metadata !280), !dbg !678
+  %2 = call i32 (i32*, i32, i8*, [257 x i32]*, i32*, [36 x i32]*, [36 x i32]*, [36 x i32]*, i8*, [257 x i32]*, i32*, [36 x i32]*, [36 x i32]*, [36 x i32]*, ...)* bitcast (i32 (...)* @DecodeHuffMCU to i32 (i32*, i32, i8*, [257 x i32]*, i32*, [36 x i32]*, [36 x i32]*, [36 x i32]*, i8*, [257 x i32]*, i32*, [36 x i32]*, [36 x i32]*, [36 x i32]*, ...)*)(i32* %HuffBuff, i32 %comp_no, i8* %p_jinfo_comps_info_dc_tbl_no, [257 x i32]* %p_jinfo_dc_xhuff_tbl_huffval, i32* %p_jinfo_dc_dhuff_tbl_ml, [36 x i32]* %p_jinfo_dc_dhuff_tbl_maxcode, [36 x i32]* %p_jinfo_dc_dhuff_tbl_mincode, [36 x i32]* %p_jinfo_dc_dhuff_tbl_valptr, i8* %CurHuffReadBuf, [257 x i32]* %p_jinfo_ac_xhuff_tbl_huffval, i32* %p_jinfo_ac_dhuff_tbl_ml, [36 x i32]* %p_jinfo_ac_dhuff_tbl_maxcode, [36 x i32]* %p_jinfo_ac_dhuff_tbl_mincode, [36 x i32]* %p_jinfo_ac_dhuff_tbl_valptr) #5, !dbg !679
+  %3 = getelementptr inbounds [64 x i32]* %QuantBuff, i64 0, i64 0, !dbg !680
+  call void @IZigzagMatrix_f2r_IZigzagMatrix(i32* %HuffBuff, i32* %3) #4, !dbg !680
+  %4 = sext i32 %comp_no to i64, !dbg !681
+  %5 = getelementptr inbounds i8* %p_jinfo_comps_info_quant_tbl_no, i64 %4, !dbg !681
+  %6 = load i8* %5, align 1, !dbg !681, !tbaa !500
+  %7 = sext i8 %6 to i64, !dbg !681
+  %8 = getelementptr inbounds [64 x i32]* %p_jinfo_quant_tbl_quantval, i64 %7, i64 64, !dbg !681
+  call void @llvm.dbg.value(metadata !{i32* %8}, i64 0, metadata !282), !dbg !681
+  call void @IQuantize_f2r_IQuantize(i32* %3, i32* %8) #4, !dbg !682
+  call void @ChenIDct_f2r_ChenIDct(i32* %3, i32* %out_buf) #5, !dbg !683
+  call void @PostshiftIDctMatrix(i32* %out_buf, i32 128) #4, !dbg !684
+  call void @decode_block_f2r_forBodyI11_s2e_BoundIDctMatrixExit(i32* %out_buf, i32 255) #4, !dbg !685
+  call void @llvm.lifetime.end(i64 256, i8* %1) #3, !dbg !686
+  ret void, !dbg !686
+}
+
+; Function Attrs: nounwind
+declare void @llvm.lifetime.start(i64, i8* nocapture) #3
+
+declare i32 @DecodeHuffMCU(...) #2
+
+declare void @ChenIDct_f2r_ChenIDct(i32*, i32*) #2
+
+; Function Attrs: nounwind
+declare void @llvm.lifetime.end(i64, i8* nocapture) #3
+
+; Function Attrs: nounwind uwtable
+define void @decode_start_f2r_vectorBody_s2e_YuvToRgbExit324(i32 %i, i32* nocapture readonly %y_buf, i32* nocapture readonly %u_buf, i32* nocapture readonly %v_buf, [3 x [64 x i32]]* nocapture %rgb_buf) #0 {
+  tail call void @llvm.dbg.value(metadata !{i32 %i}, i64 0, metadata !285), !dbg !687
+  tail call void @llvm.dbg.value(metadata !{i32* %y_buf}, i64 0, metadata !286), !dbg !687
+  tail call void @llvm.dbg.value(metadata !{i32* %u_buf}, i64 0, metadata !287), !dbg !687
+  tail call void @llvm.dbg.value(metadata !{i32* %v_buf}, i64 0, metadata !288), !dbg !687
+  tail call void @llvm.dbg.value(metadata !{[3 x [64 x i32]]* %rgb_buf}, i64 0, metadata !289), !dbg !687
+  %1 = sext i32 %i to i64, !dbg !688
+  %2 = getelementptr inbounds i32* %y_buf, i64 %1, !dbg !688
+  %3 = getelementptr inbounds i32* %u_buf, i64 4, !dbg !688
+  %4 = getelementptr inbounds i32* %v_buf, i64 5, !dbg !688
+  tail call void @YuvToRgb_f2r_YuvToRgb(i32 %i, i32* %2, i32* %3, i32* %4, [3 x [64 x i32]]* %rgb_buf) #4, !dbg !688
+  ret void, !dbg !689
+}
+
+; Function Attrs: nounwind uwtable
+define void @decode_start_f2r_vectorPh_s2e_forBody96Preheader(i32 %i, i32* nocapture readonly %y_buf, i32* nocapture readonly %u_buf, i32* nocapture readonly %v_buf, [3 x [64 x i32]]* nocapture %rgb_buf) #0 {
+  tail call void @llvm.dbg.value(metadata !{i32 %i}, i64 0, metadata !292), !dbg !690
+  tail call void @llvm.dbg.value(metadata !{i32* %y_buf}, i64 0, metadata !293), !dbg !690
+  tail call void @llvm.dbg.value(metadata !{i32* %u_buf}, i64 0, metadata !294), !dbg !690
+  tail call void @llvm.dbg.value(metadata !{i32* %v_buf}, i64 0, metadata !295), !dbg !690
+  tail call void @llvm.dbg.value(metadata !{[3 x [64 x i32]]* %rgb_buf}, i64 0, metadata !296), !dbg !690
+  tail call void @llvm.dbg.value(metadata !2, i64 0, metadata !292), !dbg !691
+  br label %1, !dbg !691
+
+; <label>:1                                       ; preds = %1, %0
+  %.01 = phi i32 [ 0, %0 ], [ %2, %1 ]
+  tail call void @decode_start_f2r_vectorBody_s2e_YuvToRgbExit324(i32 %.01, i32* %y_buf, i32* %u_buf, i32* %v_buf, [3 x [64 x i32]]* %rgb_buf) #4, !dbg !693
+  %2 = add nsw i32 %.01, 1, !dbg !691
+  tail call void @llvm.dbg.value(metadata !{i32 %2}, i64 0, metadata !292), !dbg !691
+  %exitcond = icmp eq i32 %2, 4, !dbg !691
+  br i1 %exitcond, label %3, label %1, !dbg !691
+
+; <label>:3                                       ; preds = %1
+  ret void, !dbg !695
+}
+
+; Function Attrs: nounwind uwtable
+define void @decode_start(i32* nocapture %out_data_image_width, i32* nocapture %out_data_image_height, i32* nocapture %out_data_comp_vpos, i32* nocapture %out_data_comp_hpos, [64 x i32]* nocapture readonly %p_jinfo_quant_tbl_quantval, i8* nocapture readonly %p_jinfo_comps_info_quant_tbl_no, i8* nocapture readnone %CurHuffReadBuf, i8* %p_jinfo_jpeg_data, i16 signext %p_jinfo_image_width, i16 signext %p_jinfo_image_height, i32 %p_jinfo_MCUWidth, i32 %p_jinfo_smp_fact, i32 %p_jinfo_NumMCU, i8* %p_jinfo_comps_info_dc_tbl_no, [257 x i32]* %p_jinfo_dc_xhuff_tbl_huffval, i32* %p_jinfo_dc_dhuff_tbl_ml, [36 x i32]* %p_jinfo_dc_dhuff_tbl_maxcode, [36 x i32]* %p_jinfo_dc_dhuff_tbl_mincode, [36 x i32]* %p_jinfo_dc_dhuff_tbl_valptr, [3 x [64 x i32]]* nocapture %rgb_buf, [5310 x i8]* nocapture %OutData_comp_buf, [257 x i32]* %p_jinfo_ac_xhuff_tbl_huffval, i32* %p_jinfo_ac_dhuff_tbl_ml, [36 x i32]* %p_jinfo_ac_dhuff_tbl_maxcode, [36 x i32]* %p_jinfo_ac_dhuff_tbl_mincode, [36 x i32]* %p_jinfo_ac_dhuff_tbl_valptr) #0 {
+  %HuffBuff = alloca [3 x [64 x i32]], align 16
+  %IDCTBuff = alloca [6 x [64 x i32]], align 16
+  call void @llvm.dbg.value(metadata !{i32* %out_data_image_width}, i64 0, metadata !305), !dbg !696
+  call void @llvm.dbg.value(metadata !{i32* %out_data_image_height}, i64 0, metadata !306), !dbg !696
+  call void @llvm.dbg.value(metadata !{i32* %out_data_comp_vpos}, i64 0, metadata !307), !dbg !697
+  call void @llvm.dbg.value(metadata !{i32* %out_data_comp_hpos}, i64 0, metadata !308), !dbg !697
+  call void @llvm.dbg.value(metadata !{[64 x i32]* %p_jinfo_quant_tbl_quantval}, i64 0, metadata !309), !dbg !698
+  call void @llvm.dbg.value(metadata !{i8* %p_jinfo_comps_info_quant_tbl_no}, i64 0, metadata !310), !dbg !698
+  call void @llvm.dbg.value(metadata !{i8* %CurHuffReadBuf}, i64 0, metadata !311), !dbg !699
+  call void @llvm.dbg.value(metadata !{i8* %p_jinfo_jpeg_data}, i64 0, metadata !312), !dbg !699
+  call void @llvm.dbg.value(metadata !{i16 %p_jinfo_image_width}, i64 0, metadata !313), !dbg !699
+  call void @llvm.dbg.value(metadata !{i16 %p_jinfo_image_height}, i64 0, metadata !314), !dbg !699
+  call void @llvm.dbg.value(metadata !{i32 %p_jinfo_MCUWidth}, i64 0, metadata !315), !dbg !699
+  call void @llvm.dbg.value(metadata !{i32 %p_jinfo_smp_fact}, i64 0, metadata !316), !dbg !700
+  call void @llvm.dbg.value(metadata !{i32 %p_jinfo_NumMCU}, i64 0, metadata !317), !dbg !700
+  call void @llvm.dbg.value(metadata !{i8* %p_jinfo_comps_info_dc_tbl_no}, i64 0, metadata !318), !dbg !701
+  call void @llvm.dbg.value(metadata !{[257 x i32]* %p_jinfo_dc_xhuff_tbl_huffval}, i64 0, metadata !319), !dbg !701
+  call void @llvm.dbg.value(metadata !{i32* %p_jinfo_dc_dhuff_tbl_ml}, i64 0, metadata !320), !dbg !701
+  call void @llvm.dbg.value(metadata !{[36 x i32]* %p_jinfo_dc_dhuff_tbl_maxcode}, i64 0, metadata !321), !dbg !702
+  call void @llvm.dbg.value(metadata !{[36 x i32]* %p_jinfo_dc_dhuff_tbl_mincode}, i64 0, metadata !322), !dbg !702
+  call void @llvm.dbg.value(metadata !{[36 x i32]* %p_jinfo_dc_dhuff_tbl_valptr}, i64 0, metadata !323), !dbg !702
+  call void @llvm.dbg.value(metadata !{[3 x [64 x i32]]* %rgb_buf}, i64 0, metadata !324), !dbg !703
+  call void @llvm.dbg.value(metadata !{[5310 x i8]* %OutData_comp_buf}, i64 0, metadata !325), !dbg !703
+  call void @llvm.dbg.value(metadata !{[257 x i32]* %p_jinfo_ac_xhuff_tbl_huffval}, i64 0, metadata !326), !dbg !703
+  call void @llvm.dbg.value(metadata !{i32* %p_jinfo_ac_dhuff_tbl_ml}, i64 0, metadata !327), !dbg !703
+  call void @llvm.dbg.value(metadata !{[36 x i32]* %p_jinfo_ac_dhuff_tbl_maxcode}, i64 0, metadata !328), !dbg !703
+  call void @llvm.dbg.value(metadata !{[36 x i32]* %p_jinfo_ac_dhuff_tbl_mincode}, i64 0, metadata !329), !dbg !703
+  call void @llvm.dbg.value(metadata !{[36 x i32]* %p_jinfo_ac_dhuff_tbl_valptr}, i64 0, metadata !330), !dbg !704
+  call void @llvm.dbg.value(metadata !2, i64 0, metadata !332), !dbg !705
+  %1 = bitcast [3 x [64 x i32]]* %HuffBuff to i8*, !dbg !706
+  call void @llvm.lifetime.start(i64 768, i8* %1) #3, !dbg !706
+  call void @llvm.dbg.declare(metadata !{[3 x [64 x i32]]* %HuffBuff}, metadata !333), !dbg !706
+  %2 = bitcast [6 x [64 x i32]]* %IDCTBuff to i8*, !dbg !707
+  call void @llvm.lifetime.start(i64 1536, i8* %2) #3, !dbg !707
+  call void @llvm.dbg.declare(metadata !{[6 x [64 x i32]]* %IDCTBuff}, metadata !334), !dbg !707
+  call void @llvm.dbg.value(metadata !{i8* %p_jinfo_jpeg_data}, i64 0, metadata !311), !dbg !708
+  call void @llvm.dbg.value(metadata !2, i64 0, metadata !331), !dbg !709
+  br label %3, !dbg !709
+
+; <label>:3                                       ; preds = %3, %0
+  %indvars.iv24 = phi i64 [ 0, %0 ], [ %indvars.iv.next25, %3 ]
+  %4 = getelementptr inbounds [3 x [64 x i32]]* %HuffBuff, i64 0, i64 %indvars.iv24, i64 0, !dbg !711
+  store i32 0, i32* %4, align 16, !dbg !711, !tbaa !447
+  %indvars.iv.next25 = add nuw nsw i64 %indvars.iv24, 1, !dbg !709
+  %exitcond26 = icmp eq i64 %indvars.iv.next25, 3, !dbg !709
+  br i1 %exitcond26, label %5, label %3, !dbg !709
+
+; <label>:5                                       ; preds = %3
+  %6 = sext i16 %p_jinfo_image_width to i32, !dbg !713
+  store i32 %6, i32* %out_data_image_width, align 4, !dbg !713, !tbaa !447
+  %7 = sext i16 %p_jinfo_image_height to i32, !dbg !714
+  store i32 %7, i32* %out_data_image_height, align 4, !dbg !714, !tbaa !447
+  call void @llvm.dbg.value(metadata !2, i64 0, metadata !331), !dbg !715
+  br label %8, !dbg !715
+
+; <label>:8                                       ; preds = %8, %5
+  %indvars.iv21 = phi i64 [ 0, %5 ], [ %indvars.iv.next22, %8 ]
+  %9 = getelementptr inbounds i32* %out_data_comp_vpos, i64 %indvars.iv21, !dbg !717
+  store i32 0, i32* %9, align 4, !dbg !717, !tbaa !447
+  %10 = getelementptr inbounds i32* %out_data_comp_hpos, i64 %indvars.iv21, !dbg !719
+  store i32 0, i32* %10, align 4, !dbg !719, !tbaa !447
+  %indvars.iv.next22 = add nuw nsw i64 %indvars.iv21, 1, !dbg !715
+  %exitcond23 = icmp eq i64 %indvars.iv.next22, 3, !dbg !715
+  br i1 %exitcond23, label %11, label %8, !dbg !715
+
+; <label>:11                                      ; preds = %8
+  %12 = icmp eq i32 %p_jinfo_smp_fact, 0, !dbg !720
+  br i1 %12, label %13, label %31, !dbg !720
+
+; <label>:13                                      ; preds = %11
+  %14 = call i32 (i8*, ...)* @printf(i8* getelementptr inbounds ([26 x i8]* @.str1, i64 0, i64 0), i32 %p_jinfo_NumMCU) #5, !dbg !722
+  %15 = icmp sgt i32 %p_jinfo_NumMCU, 0, !dbg !724
+  br i1 %15, label %.preheader.lr.ph, label %.loopexit, !dbg !724
+
+.preheader.lr.ph:                                 ; preds = %13
+  %16 = getelementptr inbounds [6 x [64 x i32]]* %IDCTBuff, i64 0, i64 0, i64 0, !dbg !725
+  %17 = getelementptr inbounds [6 x [64 x i32]]* %IDCTBuff, i64 0, i64 1, i64 0, !dbg !725
+  %18 = getelementptr inbounds [6 x [64 x i32]]* %IDCTBuff, i64 0, i64 2, i64 0, !dbg !725
+  br label %.preheader, !dbg !724
+
+.preheader:                                       ; preds = %29, %.preheader.lr.ph
+  %CurrentMCU.03 = phi i32 [ 0, %.preheader.lr.ph ], [ %30, %29 ]
+  br label %19, !dbg !727
+
+; <label>:19                                      ; preds = %19, %.preheader
+  %indvars.iv = phi i64 [ 0, %.preheader ], [ %indvars.iv.next, %19 ]
+  %20 = getelementptr inbounds [6 x [64 x i32]]* %IDCTBuff, i64 0, i64 %indvars.iv, i64 0, !dbg !729
+  %21 = getelementptr inbounds [3 x [64 x i32]]* %HuffBuff, i64 0, i64 %indvars.iv, i64 0, !dbg !729
+  %22 = trunc i64 %indvars.iv to i32, !dbg !729
+  call void @decode_block(i32 %22, i32* %20, i32* %21, [64 x i32]* %p_jinfo_quant_tbl_quantval, i8* %p_jinfo_comps_info_quant_tbl_no, i8* %p_jinfo_comps_info_dc_tbl_no, [257 x i32]* %p_jinfo_dc_xhuff_tbl_huffval, i32* %p_jinfo_dc_dhuff_tbl_ml, [36 x i32]* %p_jinfo_dc_dhuff_tbl_maxcode, [36 x i32]* %p_jinfo_dc_dhuff_tbl_mincode, [36 x i32]* %p_jinfo_dc_dhuff_tbl_valptr, i8* %p_jinfo_jpeg_data, [257 x i32]* %p_jinfo_ac_xhuff_tbl_huffval, i32* %p_jinfo_ac_dhuff_tbl_ml, [36 x i32]* %p_jinfo_ac_dhuff_tbl_maxcode, [36 x i32]* %p_jinfo_ac_dhuff_tbl_mincode, [36 x i32]* %p_jinfo_ac_dhuff_tbl_valptr) #4, !dbg !729
+  %indvars.iv.next = add nuw nsw i64 %indvars.iv, 1, !dbg !727
+  %exitcond = icmp eq i64 %indvars.iv.next, 3, !dbg !727
+  br i1 %exitcond, label %23, label %19, !dbg !727
+
+; <label>:23                                      ; preds = %19
+  call void @YuvToRgb_f2r_YuvToRgb(i32 0, i32* %16, i32* %17, i32* %18, [3 x [64 x i32]]* %rgb_buf) #4, !dbg !725
+  call void @llvm.dbg.value(metadata !2, i64 0, metadata !331), !dbg !731
+  br label %24, !dbg !731
+
+; <label>:24                                      ; preds = %24, %23
+  %indvars.iv11 = phi i64 [ 0, %23 ], [ %indvars.iv.next12, %24 ]
+  %25 = getelementptr inbounds [3 x [64 x i32]]* %rgb_buf, i64 0, i64 %indvars.iv11, i64 0, !dbg !733
+  %26 = getelementptr inbounds i32* %out_data_comp_vpos, i64 %indvars.iv11, !dbg !733
+  %27 = getelementptr inbounds i32* %out_data_comp_hpos, i64 %indvars.iv11, !dbg !733
+  %28 = getelementptr inbounds [5310 x i8]* %OutData_comp_buf, i64 %indvars.iv11, i64 0, !dbg !733
+  call void @WriteBlock_f2r_WriteBlock(i32* %25, i32* %26, i32* %27, i8* %28, i16 signext %p_jinfo_image_width, i16 signext %p_jinfo_image_height, i32 %p_jinfo_MCUWidth) #4, !dbg !733
+  %indvars.iv.next12 = add nuw nsw i64 %indvars.iv11, 1, !dbg !731
+  %exitcond13 = icmp eq i64 %indvars.iv.next12, 3, !dbg !731
+  br i1 %exitcond13, label %29, label %24, !dbg !731
+
+; <label>:29                                      ; preds = %24
+  %30 = add nsw i32 %CurrentMCU.03, 1, !dbg !735
+  call void @llvm.dbg.value(metadata !{i32 %30}, i64 0, metadata !332), !dbg !735
+  %exitcond14 = icmp eq i32 %30, %p_jinfo_NumMCU, !dbg !724
+  br i1 %exitcond14, label %.loopexit, label %.preheader, !dbg !724
+
+; <label>:31                                      ; preds = %11
+  %32 = call i32 (i8*, ...)* @printf(i8* getelementptr inbounds ([26 x i8]* @.str2, i64 0, i64 0), i32 %p_jinfo_NumMCU) #5, !dbg !736
+  %33 = icmp sgt i32 %p_jinfo_NumMCU, 0, !dbg !738
+  br i1 %33, label %.preheader4.lr.ph, label %.loopexit, !dbg !738
+
+.preheader4.lr.ph:                                ; preds = %31
+  %34 = getelementptr inbounds [3 x [64 x i32]]* %HuffBuff, i64 0, i64 0, i64 0, !dbg !739
+  %35 = getelementptr inbounds [6 x [64 x i32]]* %IDCTBuff, i64 0, i64 4, i64 0, !dbg !743
+  %36 = getelementptr inbounds [3 x [64 x i32]]* %HuffBuff, i64 0, i64 1, i64 0, !dbg !743
+  %37 = getelementptr inbounds [6 x [64 x i32]]* %IDCTBuff, i64 0, i64 5, i64 0, !dbg !744
+  %38 = getelementptr inbounds [3 x [64 x i32]]* %HuffBuff, i64 0, i64 2, i64 0, !dbg !744
+  br label %.preheader4, !dbg !738
+
+.preheader4:                                      ; preds = %.preheader4.lr.ph, %51
+  %CurrentMCU.18 = phi i32 [ 0, %.preheader4.lr.ph ], [ %52, %51 ]
+  br label %39, !dbg !745
+
+; <label>:39                                      ; preds = %39, %.preheader4
+  %indvars.iv15 = phi i64 [ 0, %.preheader4 ], [ %indvars.iv.next16, %39 ]
+  %40 = getelementptr inbounds [6 x [64 x i32]]* %IDCTBuff, i64 0, i64 %indvars.iv15, i64 0, !dbg !739
+  call void @decode_block(i32 0, i32* %40, i32* %34, [64 x i32]* %p_jinfo_quant_tbl_quantval, i8* %p_jinfo_comps_info_quant_tbl_no, i8* %p_jinfo_comps_info_dc_tbl_no, [257 x i32]* %p_jinfo_dc_xhuff_tbl_huffval, i32* %p_jinfo_dc_dhuff_tbl_ml, [36 x i32]* %p_jinfo_dc_dhuff_tbl_maxcode, [36 x i32]* %p_jinfo_dc_dhuff_tbl_mincode, [36 x i32]* %p_jinfo_dc_dhuff_tbl_valptr, i8* %p_jinfo_jpeg_data, [257 x i32]* %p_jinfo_ac_xhuff_tbl_huffval, i32* %p_jinfo_ac_dhuff_tbl_ml, [36 x i32]* %p_jinfo_ac_dhuff_tbl_maxcode, [36 x i32]* %p_jinfo_ac_dhuff_tbl_mincode, [36 x i32]* %p_jinfo_ac_dhuff_tbl_valptr) #4, !dbg !739
+  %indvars.iv.next16 = add nuw nsw i64 %indvars.iv15, 1, !dbg !745
+  call void @llvm.dbg.value(metadata !746, i64 0, metadata !331), !dbg !745
+  %exitcond17 = icmp eq i64 %indvars.iv.next16, 4, !dbg !745
+  br i1 %exitcond17, label %41, label %39, !dbg !745
+
+; <label>:41                                      ; preds = %39
+  call void @decode_block(i32 1, i32* %35, i32* %36, [64 x i32]* %p_jinfo_quant_tbl_quantval, i8* %p_jinfo_comps_info_quant_tbl_no, i8* %p_jinfo_comps_info_dc_tbl_no, [257 x i32]* %p_jinfo_dc_xhuff_tbl_huffval, i32* %p_jinfo_dc_dhuff_tbl_ml, [36 x i32]* %p_jinfo_dc_dhuff_tbl_maxcode, [36 x i32]* %p_jinfo_dc_dhuff_tbl_mincode, [36 x i32]* %p_jinfo_dc_dhuff_tbl_valptr, i8* %p_jinfo_jpeg_data, [257 x i32]* %p_jinfo_ac_xhuff_tbl_huffval, i32* %p_jinfo_ac_dhuff_tbl_ml, [36 x i32]* %p_jinfo_ac_dhuff_tbl_maxcode, [36 x i32]* %p_jinfo_ac_dhuff_tbl_mincode, [36 x i32]* %p_jinfo_ac_dhuff_tbl_valptr) #4, !dbg !743
+  call void @decode_block(i32 2, i32* %37, i32* %38, [64 x i32]* %p_jinfo_quant_tbl_quantval, i8* %p_jinfo_comps_info_quant_tbl_no, i8* %p_jinfo_comps_info_dc_tbl_no, [257 x i32]* %p_jinfo_dc_xhuff_tbl_huffval, i32* %p_jinfo_dc_dhuff_tbl_ml, [36 x i32]* %p_jinfo_dc_dhuff_tbl_maxcode, [36 x i32]* %p_jinfo_dc_dhuff_tbl_mincode, [36 x i32]* %p_jinfo_dc_dhuff_tbl_valptr, i8* %p_jinfo_jpeg_data, [257 x i32]* %p_jinfo_ac_xhuff_tbl_huffval, i32* %p_jinfo_ac_dhuff_tbl_ml, [36 x i32]* %p_jinfo_ac_dhuff_tbl_maxcode, [36 x i32]* %p_jinfo_ac_dhuff_tbl_mincode, [36 x i32]* %p_jinfo_ac_dhuff_tbl_valptr) #4, !dbg !744
+  %42 = getelementptr inbounds [6 x [64 x i32]]* %IDCTBuff, i64 0, i64 4, i64 0, !dbg !747
+  call void @decode_start_f2r_vectorPh_s2e_forBody96Preheader(i32 undef, i32* %42, i32* %35, i32* %37, [3 x [64 x i32]]* %rgb_buf) #4, !dbg !747
+  call void @llvm.dbg.value(metadata !2, i64 0, metadata !331), !dbg !748
+  br label %43, !dbg !748
+
+; <label>:43                                      ; preds = %43, %41
+  %indvars.iv18 = phi i64 [ 0, %41 ], [ %indvars.iv.next19, %43 ]
+  %44 = getelementptr inbounds [3 x [64 x i32]]* %rgb_buf, i64 0, i64 %indvars.iv18, i64 0, !dbg !750
+  %45 = getelementptr inbounds [3 x [64 x i32]]* %rgb_buf, i64 1, i64 %indvars.iv18, i64 0, !dbg !750
+  %46 = getelementptr inbounds [3 x [64 x i32]]* %rgb_buf, i64 2, i64 %indvars.iv18, i64 0, !dbg !750
+  %47 = getelementptr inbounds [3 x [64 x i32]]* %rgb_buf, i64 3, i64 %indvars.iv18, i64 0, !dbg !750
+  %48 = getelementptr inbounds i32* %out_data_comp_vpos, i64 %indvars.iv18, !dbg !750
+  %49 = getelementptr inbounds i32* %out_data_comp_hpos, i64 %indvars.iv18, !dbg !750
+  %50 = getelementptr inbounds [5310 x i8]* %OutData_comp_buf, i64 %indvars.iv18, i64 0, !dbg !750
+  call void @Write4Blocks_f2r_Write4Blocks(i32* %44, i32* %45, i32* %46, i32* %47, i32* %48, i32* %49, i8* %50, i16 signext %p_jinfo_image_width, i16 signext %p_jinfo_image_height, i32 %p_jinfo_MCUWidth) #4, !dbg !750
+  %indvars.iv.next19 = add nuw nsw i64 %indvars.iv18, 1, !dbg !748
+  %exitcond20 = icmp eq i64 %indvars.iv.next19, 3, !dbg !748
+  br i1 %exitcond20, label %51, label %43, !dbg !748
+
+; <label>:51                                      ; preds = %43
+  %52 = add nsw i32 %CurrentMCU.18, 4, !dbg !752
+  call void @llvm.dbg.value(metadata !{i32 %52}, i64 0, metadata !332), !dbg !752
+  %53 = icmp slt i32 %52, %p_jinfo_NumMCU, !dbg !738
+  br i1 %53, label %.preheader4, label %.loopexit, !dbg !738
+
+.loopexit:                                        ; preds = %31, %51, %13, %29
+  call void @llvm.lifetime.end(i64 1536, i8* %2) #3, !dbg !753
+  call void @llvm.lifetime.end(i64 768, i8* %1) #3, !dbg !753
+  ret void, !dbg !753
+}
+
+; Function Attrs: nounwind readnone
+declare void @llvm.dbg.value(metadata, i64, metadata) #1
+
+attributes #0 = { nounwind uwtable "less-precise-fpmad"="false" "no-frame-pointer-elim"="false" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "stack-protector-buffer-size"="8" "unsafe-fp-math"="false" "use-soft-float"="false" }
+attributes #1 = { nounwind readnone }
+attributes #2 = { "less-precise-fpmad"="false" "no-frame-pointer-elim"="false" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "stack-protector-buffer-size"="8" "unsafe-fp-math"="false" "use-soft-float"="false" }
+attributes #3 = { nounwind }
+attributes #4 = { nobuiltin }
+attributes #5 = { nobuiltin nounwind }
+
+!llvm.dbg.cu = !{!0}
+!llvm.module.flags = !{!439, !440}
+!llvm.ident = !{!441}
+
+!0 = metadata !{i32 786449, metadata !1, i32 12, metadata !"clang version 3.4 (tags/RELEASE_34/final)", i1 true, metadata !"", i32 0, metadata !2, metadata !2, metadata !3, metadata !338, metadata !2, metadata !""} ; [ DW_TAG_compile_unit ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c] [DW_LANG_C99]
+!1 = metadata !{metadata !"decode.c", metadata !"/home/giorgio/ALADDIN/SHOC/jpeg/REG_5"}
+!2 = metadata !{i32 0}
+!3 = metadata !{metadata !4, metadata !14, metadata !18, metadata !27, metadata !34, metadata !38, metadata !45, metadata !50, metadata !54, metadata !66, metadata !83, metadata !93, metadata !108, metadata !122, metadata !141, metadata !151, metadata !159, metadata !167, metadata !183, metadata !204, metadata !220, metadata !235, metadata !242, metadata !246, metadata !283, metadata !290, metadata !297}
+!4 = metadata !{i32 786478, metadata !1, metadata !5, metadata !"IZigzagMatrix_f2r_forBody_s2e_forEnd", metadata !"IZigzagMatrix_f2r_forBody_s2e_forEnd", metadata !"", i32 77, metadata !6, i1 false, i1 true, i32 0, i32 0, null, i32 256, i1 true, void (i32*, i32*)* @IZigzagMatrix_f2r_forBody_s2e_forEnd, null, null, metadata !10, i32 77} ; [ DW_TAG_subprogram ] [line 77] [def] [IZigzagMatrix_f2r_forBody_s2e_forEnd]
+!5 = metadata !{i32 786473, metadata !1}          ; [ DW_TAG_file_type ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!6 = metadata !{i32 786453, i32 0, null, metadata !"", i32 0, i64 0, i64 0, i64 0, i32 0, null, metadata !7, i32 0, null, null, null} ; [ DW_TAG_subroutine_type ] [line 0, size 0, align 0, offset 0] [from ]
+!7 = metadata !{null, metadata !8, metadata !8}
+!8 = metadata !{i32 786447, null, null, metadata !"", i32 0, i64 64, i64 64, i64 0, i32 0, metadata !9} ; [ DW_TAG_pointer_type ] [line 0, size 64, align 64, offset 0] [from int]
+!9 = metadata !{i32 786468, null, null, metadata !"int", i32 0, i64 32, i64 32, i64 0, i32 0, i32 5} ; [ DW_TAG_base_type ] [int] [line 0, size 32, align 32, offset 0, enc DW_ATE_signed]
+!10 = metadata !{metadata !11, metadata !12, metadata !13}
+!11 = metadata !{i32 786689, metadata !4, metadata !"imatrix", metadata !5, i32 16777293, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [imatrix] [line 77]
+!12 = metadata !{i32 786689, metadata !4, metadata !"omatrix", metadata !5, i32 33554509, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [omatrix] [line 77]
+!13 = metadata !{i32 786688, metadata !4, metadata !"i", metadata !5, i32 78, metadata !9, i32 0, i32 0} ; [ DW_TAG_auto_variable ] [i] [line 78]
+!14 = metadata !{i32 786478, metadata !1, metadata !5, metadata !"IZigzagMatrix_f2r_IZigzagMatrix", metadata !"IZigzagMatrix_f2r_IZigzagMatrix", metadata !"", i32 98, metadata !6, i1 false, i1 true, i32 0, i32 0, null, i32 256, i1 true, void (i32*, i32*)* @IZigzagMatrix_f2r_IZigzagMatrix, null, null, metadata !15, i32 99} ; [ DW_TAG_subprogram ] [line 98] [def] [scope 99] [IZigzagMatrix_f2r_IZigzagMatrix]
+!15 = metadata !{metadata !16, metadata !17}
+!16 = metadata !{i32 786689, metadata !14, metadata !"imatrix", metadata !5, i32 16777314, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [imatrix] [line 98]
+!17 = metadata !{i32 786689, metadata !14, metadata !"omatrix", metadata !5, i32 33554530, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [omatrix] [line 98]
+!18 = metadata !{i32 786478, metadata !1, metadata !5, metadata !"IQuantize_f2r_forBody_s2e_forEndLoopexit", metadata !"IQuantize_f2r_forBody_s2e_forEndLoopexit", metadata !"", i32 129, metadata !19, i1 false, i1 true, i32 0, i32 0, null, i32 256, i1 true, i32 (i32*, i32*, i32*)* @IQuantize_f2r_forBody_s2e_forEndLoopexit, null, null, metadata !23, i32 129} ; [ DW_TAG_subprogram ] [line 129] [def] [IQuantize_f2r_forBody_s2e_forEndLoopexit]
+!19 = metadata !{i32 786453, i32 0, null, metadata !"", i32 0, i64 0, i64 0, i64 0, i32 0, null, metadata !20, i32 0, null, null, null} ; [ DW_TAG_subroutine_type ] [line 0, size 0, align 0, offset 0] [from ]
+!20 = metadata !{metadata !9, metadata !8, metadata !21, metadata !8}
+!21 = metadata !{i32 786447, null, null, metadata !"", i32 0, i64 64, i64 64, i64 0, i32 0, metadata !22} ; [ DW_TAG_pointer_type ] [line 0, size 64, align 64, offset 0] [from unsigned int]
+!22 = metadata !{i32 786468, null, null, metadata !"unsigned int", i32 0, i64 32, i64 32, i64 0, i32 0, i32 7} ; [ DW_TAG_base_type ] [unsigned int] [line 0, size 32, align 32, offset 0, enc DW_ATE_unsigned]
+!23 = metadata !{metadata !24, metadata !25, metadata !26}
+!24 = metadata !{i32 786689, metadata !18, metadata !"matrix", metadata !5, i32 16777345, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [matrix] [line 129]
+!25 = metadata !{i32 786689, metadata !18, metadata !"qmatrix", metadata !5, i32 33554561, metadata !21, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [qmatrix] [line 129]
+!26 = metadata !{i32 786689, metadata !18, metadata !"mptr", metadata !5, i32 50331777, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [mptr] [line 129]
+!27 = metadata !{i32 786478, metadata !1, metadata !5, metadata !"IQuantize_f2r_entry_s2e_forEnd", metadata !"IQuantize_f2r_entry_s2e_forEnd", metadata !"", i32 137, metadata !28, i1 false, i1 true, i32 0, i32 0, null, i32 256, i1 true, void (i32*, i32*)* @IQuantize_f2r_entry_s2e_forEnd, null, null, metadata !30, i32 137} ; [ DW_TAG_subprogram ] [line 137] [def] [IQuantize_f2r_entry_s2e_forEnd]
+!28 = metadata !{i32 786453, i32 0, null, metadata !"", i32 0, i64 0, i64 0, i64 0, i32 0, null, metadata !29, i32 0, null, null, null} ; [ DW_TAG_subroutine_type ] [line 0, size 0, align 0, offset 0] [from ]
+!29 = metadata !{null, metadata !8, metadata !21}
+!30 = metadata !{metadata !31, metadata !32, metadata !33}
+!31 = metadata !{i32 786689, metadata !27, metadata !"matrix", metadata !5, i32 16777353, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [matrix] [line 137]
+!32 = metadata !{i32 786689, metadata !27, metadata !"qmatrix", metadata !5, i32 33554569, metadata !21, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [qmatrix] [line 137]
+!33 = metadata !{i32 786688, metadata !27, metadata !"mptr", metadata !5, i32 138, metadata !8, i32 0, i32 0} ; [ DW_TAG_auto_variable ] [mptr] [line 138]
+!34 = metadata !{i32 786478, metadata !1, metadata !5, metadata !"IQuantize_f2r_IQuantize", metadata !"IQuantize_f2r_IQuantize", metadata !"", i32 148, metadata !28, i1 false, i1 true, i32 0, i32 0, null, i32 256, i1 true, void (i32*, i32*)* @IQuantize_f2r_IQuantize, null, null, metadata !35, i32 149} ; [ DW_TAG_subprogram ] [line 148] [def] [scope 149] [IQuantize_f2r_IQuantize]
+!35 = metadata !{metadata !36, metadata !37}
+!36 = metadata !{i32 786689, metadata !34, metadata !"matrix", metadata !5, i32 16777364, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [matrix] [line 148]
+!37 = metadata !{i32 786689, metadata !34, metadata !"qmatrix", metadata !5, i32 33554580, metadata !21, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [qmatrix] [line 148]
+!38 = metadata !{i32 786478, metadata !1, metadata !5, metadata !"PostshiftIDctMatrix", metadata !"PostshiftIDctMatrix", metadata !"", i32 166, metadata !39, i1 false, i1 true, i32 0, i32 0, null, i32 256, i1 true, void (i32*, i32)* @PostshiftIDctMatrix, null, null, metadata !41, i32 167} ; [ DW_TAG_subprogram ] [line 166] [def] [scope 167] [PostshiftIDctMatrix]
+!39 = metadata !{i32 786453, i32 0, null, metadata !"", i32 0, i64 0, i64 0, i64 0, i32 0, null, metadata !40, i32 0, null, null, null} ; [ DW_TAG_subroutine_type ] [line 0, size 0, align 0, offset 0] [from ]
+!40 = metadata !{null, metadata !8, metadata !9}
+!41 = metadata !{metadata !42, metadata !43, metadata !44}
+!42 = metadata !{i32 786689, metadata !38, metadata !"matrix", metadata !5, i32 16777382, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [matrix] [line 166]
+!43 = metadata !{i32 786689, metadata !38, metadata !"shift", metadata !5, i32 33554598, metadata !9, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [shift] [line 166]
+!44 = metadata !{i32 786688, metadata !38, metadata !"mptr", metadata !5, i32 168, metadata !8, i32 0, i32 0} ; [ DW_TAG_auto_variable ] [mptr] [line 168]
+!45 = metadata !{i32 786478, metadata !1, metadata !5, metadata !"BoundIDctMatrix_f2r_forBody_s2e_forEnd", metadata !"BoundIDctMatrix_f2r_forBody_s2e_forEnd", metadata !"", i32 180, metadata !39, i1 false, i1 true, i32 0, i32 0, null, i32 256, i1 true, void (i32*, i32)* @BoundIDctMatrix_f2r_forBody_s2e_forEnd, null, null, metadata !46, i32 180} ; [ DW_TAG_subprogram ] [line 180] [def] [BoundIDctMatrix_f2r_forBody_s2e_forEnd]
+!46 = metadata !{metadata !47, metadata !48, metadata !49}
+!47 = metadata !{i32 786689, metadata !45, metadata !"matrix", metadata !5, i32 16777396, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [matrix] [line 180]
+!48 = metadata !{i32 786689, metadata !45, metadata !"Bound", metadata !5, i32 33554612, metadata !9, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [Bound] [line 180]
+!49 = metadata !{i32 786688, metadata !45, metadata !"mptr", metadata !5, i32 181, metadata !8, i32 0, i32 0} ; [ DW_TAG_auto_variable ] [mptr] [line 181]
+!50 = metadata !{i32 786478, metadata !1, metadata !5, metadata !"BoundIDctMatrix_f2r_BoundIDctMatrix", metadata !"BoundIDctMatrix_f2r_BoundIDctMatrix", metadata !"", i32 197, metadata !39, i1 false, i1 true, i32 0, i32 0, null, i32 256, i1 true, void (i32*, i32)* @BoundIDctMatrix_f2r_BoundIDctMatrix, null, null, metadata !51, i32 198} ; [ DW_TAG_subprogram ] [line 197] [def] [scope 198] [BoundIDctMatrix_f2r_BoundIDctMatrix]
+!51 = metadata !{metadata !52, metadata !53}
+!52 = metadata !{i32 786689, metadata !50, metadata !"matrix", metadata !5, i32 16777413, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [matrix] [line 197]
+!53 = metadata !{i32 786689, metadata !50, metadata !"Bound", metadata !5, i32 33554629, metadata !9, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [Bound] [line 197]
+!54 = metadata !{i32 786478, metadata !1, metadata !5, metadata !"WriteOneBlock_f2r_ifThen7Us_s2e_forCond2ForEnd_crit_edgeUs", metadata !"WriteOneBlock_f2r_ifThen7Us_s2e_forCond2ForEnd_crit_edgeUs", metadata !"", i32 215, metadata !55, i1 false, i1 true, i32 0, i32 0, null, i32 256, i1 true, void (i32*, i8*, i32, i32, i32)* @WriteOneBlock_f2r_ifThen7Us_s2e_forCond2ForEnd_crit_edgeUs, null, null, metadata !59, i32 215} ; [ DW_TAG_subprogram ] [line 215] [def] [WriteOneBlock_f2r_ifThen7Us_s2e_forCond2ForEnd_crit_edgeUs]
+!55 = metadata !{i32 786453, i32 0, null, metadata !"", i32 0, i64 0, i64 0, i64 0, i32 0, null, metadata !56, i32 0, null, null, null} ; [ DW_TAG_subroutine_type ] [line 0, size 0, align 0, offset 0] [from ]
+!56 = metadata !{null, metadata !8, metadata !57, metadata !9, metadata !9, metadata !9}
+!57 = metadata !{i32 786447, null, null, metadata !"", i32 0, i64 64, i64 64, i64 0, i32 0, metadata !58} ; [ DW_TAG_pointer_type ] [line 0, size 64, align 64, offset 0] [from unsigned char]
+!58 = metadata !{i32 786468, null, null, metadata !"unsigned char", i32 0, i64 8, i64 8, i64 0, i32 0, i32 8} ; [ DW_TAG_base_type ] [unsigned char] [line 0, size 8, align 8, offset 0, enc DW_ATE_unsigned_char]
+!59 = metadata !{metadata !60, metadata !61, metadata !62, metadata !63, metadata !64, metadata !65}
+!60 = metadata !{i32 786689, metadata !54, metadata !"store", metadata !5, i32 16777431, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [store] [line 215]
+!61 = metadata !{i32 786689, metadata !54, metadata !"out_buf", metadata !5, i32 33554647, metadata !57, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [out_buf] [line 215]
+!62 = metadata !{i32 786689, metadata !54, metadata !"width", metadata !5, i32 50331863, metadata !9, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [width] [line 215]
+!63 = metadata !{i32 786689, metadata !54, metadata !"hoffs", metadata !5, i32 67109079, metadata !9, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [hoffs] [line 215]
+!64 = metadata !{i32 786689, metadata !54, metadata !"diff", metadata !5, i32 83886295, metadata !9, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [diff] [line 215]
+!65 = metadata !{i32 786688, metadata !54, metadata !"e", metadata !5, i32 216, metadata !9, i32 0, i32 0} ; [ DW_TAG_auto_variable ] [e] [line 216]
+!66 = metadata !{i32 786478, metadata !1, metadata !5, metadata !"WriteOneBlock_f2r_ifThenUs_s2e_forEnd13Loopexit", metadata !"WriteOneBlock_f2r_ifThenUs_s2e_forEnd13Loopexit", metadata !"", i32 230, metadata !67, i1 false, i1 true, i32 0, i32 0, null, i32 256, i1 true, void (i32*, i8*, i32, i32, i32, i32)* @WriteOneBlock_f2r_ifThenUs_s2e_forEnd13Loopexit, null, null, metadata !69, i32 231} ; [ DW_TAG_subprogram ] [line 230] [def] [scope 231] [WriteOneBlock_f2r_ifThenUs_s2e_forEnd13Loopexit]
+!67 = metadata !{i32 786453, i32 0, null, metadata !"", i32 0, i64 0, i64 0, i64 0, i32 0, null, metadata !68, i32 0, null, null, null} ; [ DW_TAG_subroutine_type ] [line 0, size 0, align 0, offset 0] [from ]
+!68 = metadata !{null, metadata !8, metadata !57, metadata !9, metadata !9, metadata !9, metadata !9}
+!69 = metadata !{metadata !70, metadata !71, metadata !72, metadata !73, metadata !74, metadata !75, metadata !76, metadata !77, metadata !82}
+!70 = metadata !{i32 786689, metadata !66, metadata !"store", metadata !5, i32 16777446, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [store] [line 230]
+!71 = metadata !{i32 786689, metadata !66, metadata !"out_buf", metadata !5, i32 33554662, metadata !57, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [out_buf] [line 230]
+!72 = metadata !{i32 786689, metadata !66, metadata !"width", metadata !5, i32 50331878, metadata !9, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [width] [line 230]
+!73 = metadata !{i32 786689, metadata !66, metadata !"height", metadata !5, i32 67109094, metadata !9, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [height] [line 230]
+!74 = metadata !{i32 786689, metadata !66, metadata !"voffs", metadata !5, i32 83886311, metadata !9, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [voffs] [line 231]
+!75 = metadata !{i32 786689, metadata !66, metadata !"hoffs", metadata !5, i32 100663527, metadata !9, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [hoffs] [line 231]
+!76 = metadata !{i32 786688, metadata !66, metadata !"i", metadata !5, i32 232, metadata !9, i32 0, i32 0} ; [ DW_TAG_auto_variable ] [i] [line 232]
+!77 = metadata !{i32 786688, metadata !78, metadata !"diff", metadata !5, i32 238, metadata !9, i32 0, i32 0} ; [ DW_TAG_auto_variable ] [diff] [line 238]
+!78 = metadata !{i32 786443, metadata !1, metadata !79, i32 237, i32 0, i32 20} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!79 = metadata !{i32 786443, metadata !1, metadata !80, i32 236, i32 0, i32 19} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!80 = metadata !{i32 786443, metadata !1, metadata !81, i32 235, i32 0, i32 18} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!81 = metadata !{i32 786443, metadata !1, metadata !66, i32 234, i32 0, i32 17} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!82 = metadata !{i32 786688, metadata !78, metadata !"e", metadata !5, i32 241, metadata !9, i32 0, i32 0} ; [ DW_TAG_auto_variable ] [e] [line 241]
+!83 = metadata !{i32 786478, metadata !1, metadata !5, metadata !"WriteOneBlock_f2r_entry_s2e_forEnd13", metadata !"WriteOneBlock_f2r_entry_s2e_forEnd13", metadata !"", i32 261, metadata !67, i1 false, i1 true, i32 0, i32 0, null, i32 256, i1 true, void (i32*, i8*, i32, i32, i32, i32)* @WriteOneBlock_f2r_entry_s2e_forEnd13, null, null, metadata !84, i32 262} ; [ DW_TAG_subprogram ] [line 261] [def] [scope 262] [WriteOneBlock_f2r_entry_s2e_forEnd13]
+!84 = metadata !{metadata !85, metadata !86, metadata !87, metadata !88, metadata !89, metadata !90, metadata !91, metadata !92}
+!85 = metadata !{i32 786689, metadata !83, metadata !"store", metadata !5, i32 16777477, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [store] [line 261]
+!86 = metadata !{i32 786689, metadata !83, metadata !"out_buf", metadata !5, i32 33554693, metadata !57, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [out_buf] [line 261]
+!87 = metadata !{i32 786689, metadata !83, metadata !"width", metadata !5, i32 50331909, metadata !9, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [width] [line 261]
+!88 = metadata !{i32 786689, metadata !83, metadata !"height", metadata !5, i32 67109125, metadata !9, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [height] [line 261]
+!89 = metadata !{i32 786689, metadata !83, metadata !"voffs", metadata !5, i32 83886342, metadata !9, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [voffs] [line 262]
+!90 = metadata !{i32 786689, metadata !83, metadata !"hoffs", metadata !5, i32 100663558, metadata !9, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [hoffs] [line 262]
+!91 = metadata !{i32 786688, metadata !83, metadata !"i", metadata !5, i32 263, metadata !9, i32 0, i32 0} ; [ DW_TAG_auto_variable ] [i] [line 263]
+!92 = metadata !{i32 786688, metadata !83, metadata !"e", metadata !5, i32 263, metadata !9, i32 0, i32 0} ; [ DW_TAG_auto_variable ] [e] [line 263]
+!93 = metadata !{i32 786478, metadata !1, metadata !5, metadata !"WriteOneBlock_f2r_WriteOneBlock", metadata !"WriteOneBlock_f2r_WriteOneBlock", metadata !"", i32 293, metadata !67, i1 false, i1 true, i32 0, i32 0, null, i32 256, i1 true, void (i32*, i8*, i32, i32, i32, i32)* @WriteOneBlock_f2r_WriteOneBlock, null, null, metadata !94, i32 295} ; [ DW_TAG_subprogram ] [line 293] [def] [scope 295] [WriteOneBlock_f2r_WriteOneBlock]
+!94 = metadata !{metadata !95, metadata !96, metadata !97, metadata !98, metadata !99, metadata !100, metadata !101, metadata !102, metadata !103}
+!95 = metadata !{i32 786689, metadata !93, metadata !"store", metadata !5, i32 16777509, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [store] [line 293]
+!96 = metadata !{i32 786689, metadata !93, metadata !"out_buf", metadata !5, i32 33554725, metadata !57, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [out_buf] [line 293]
+!97 = metadata !{i32 786689, metadata !93, metadata !"width", metadata !5, i32 50331941, metadata !9, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [width] [line 293]
+!98 = metadata !{i32 786689, metadata !93, metadata !"height", metadata !5, i32 67109157, metadata !9, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [height] [line 293]
+!99 = metadata !{i32 786689, metadata !93, metadata !"voffs", metadata !5, i32 83886374, metadata !9, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [voffs] [line 294]
+!100 = metadata !{i32 786689, metadata !93, metadata !"hoffs", metadata !5, i32 100663590, metadata !9, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [hoffs] [line 294]
+!101 = metadata !{i32 786688, metadata !93, metadata !"i", metadata !5, i32 297, metadata !9, i32 0, i32 0} ; [ DW_TAG_auto_variable ] [i] [line 297]
+!102 = metadata !{i32 786688, metadata !93, metadata !"e", metadata !5, i32 297, metadata !9, i32 0, i32 0} ; [ DW_TAG_auto_variable ] [e] [line 297]
+!103 = metadata !{i32 786688, metadata !104, metadata !"diff", metadata !5, i32 305, metadata !9, i32 0, i32 0} ; [ DW_TAG_auto_variable ] [diff] [line 305]
+!104 = metadata !{i32 786443, metadata !1, metadata !105, i32 304, i32 0, i32 30} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!105 = metadata !{i32 786443, metadata !1, metadata !106, i32 303, i32 0, i32 29} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!106 = metadata !{i32 786443, metadata !1, metadata !107, i32 302, i32 0, i32 28} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!107 = metadata !{i32 786443, metadata !1, metadata !93, i32 301, i32 0, i32 27} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!108 = metadata !{i32 786478, metadata !1, metadata !5, metadata !"WriteBlock_f2r_WriteBlock", metadata !"WriteBlock_f2r_WriteBlock", metadata !"", i32 336, metadata !109, i1 false, i1 true, i32 0, i32 0, null, i32 256, i1 true, void (i32*, i32*, i32*, i8*, i16, i16, i32)* @WriteBlock_f2r_WriteBlock, null, null, metadata !112, i32 338} ; [ DW_TAG_subprogram ] [line 336] [def] [scope 338] [WriteBlock_f2r_WriteBlock]
+!109 = metadata !{i32 786453, i32 0, null, metadata !"", i32 0, i64 0, i64 0, i64 0, i32 0, null, metadata !110, i32 0, null, null, null} ; [ DW_TAG_subroutine_type ] [line 0, size 0, align 0, offset 0] [from ]
+!110 = metadata !{null, metadata !8, metadata !8, metadata !8, metadata !57, metadata !111, metadata !111, metadata !9}
+!111 = metadata !{i32 786468, null, null, metadata !"short", i32 0, i64 16, i64 16, i64 0, i32 0, i32 5} ; [ DW_TAG_base_type ] [short] [line 0, size 16, align 16, offset 0, enc DW_ATE_signed]
+!112 = metadata !{metadata !113, metadata !114, metadata !115, metadata !116, metadata !117, metadata !118, metadata !119, metadata !120, metadata !121}
+!113 = metadata !{i32 786689, metadata !108, metadata !"store", metadata !5, i32 16777552, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [store] [line 336]
+!114 = metadata !{i32 786689, metadata !108, metadata !"p_out_vpos", metadata !5, i32 33554768, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [p_out_vpos] [line 336]
+!115 = metadata !{i32 786689, metadata !108, metadata !"p_out_hpos", metadata !5, i32 50331984, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [p_out_hpos] [line 336]
+!116 = metadata !{i32 786689, metadata !108, metadata !"p_out_buf", metadata !5, i32 67109201, metadata !57, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [p_out_buf] [line 337]
+!117 = metadata !{i32 786689, metadata !108, metadata !"p_jinfo_image_width", metadata !5, i32 83886417, metadata !111, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [p_jinfo_image_width] [line 337]
+!118 = metadata !{i32 786689, metadata !108, metadata !"p_jinfo_image_height", metadata !5, i32 100663633, metadata !111, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [p_jinfo_image_height] [line 337]
+!119 = metadata !{i32 786689, metadata !108, metadata !"p_jinfo_MCUWidth", metadata !5, i32 117440849, metadata !9, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [p_jinfo_MCUWidth] [line 337]
+!120 = metadata !{i32 786688, metadata !108, metadata !"voffs", metadata !5, i32 339, metadata !9, i32 0, i32 0} ; [ DW_TAG_auto_variable ] [voffs] [line 339]
+!121 = metadata !{i32 786688, metadata !108, metadata !"hoffs", metadata !5, i32 339, metadata !9, i32 0, i32 0} ; [ DW_TAG_auto_variable ] [hoffs] [line 339]
+!122 = metadata !{i32 786478, metadata !1, metadata !5, metadata !"Write4Blocks_f2r_entry_s2e_WriteOneBlockExit", metadata !"Write4Blocks_f2r_entry_s2e_WriteOneBlockExit", metadata !"", i32 374, metadata !123, i1 false, i1 true, i32 0, i32 0, null, i32 256, i1 true, void (i32*, i8*, i32, i32, i32*, i32*, i32*, i32*)* @Write4Blocks_f2r_entry_s2e_WriteOneBlockExit, null, null, metadata !125, i32 375} ; [ DW_TAG_subprogram ] [line 374] [def] [scope 375] [Write4Blocks_f2r_entry_s2e_WriteOneBlockExit]
+!123 = metadata !{i32 786453, i32 0, null, metadata !"", i32 0, i64 0, i64 0, i64 0, i32 0, null, metadata !124, i32 0, null, null, null} ; [ DW_TAG_subroutine_type ] [line 0, size 0, align 0, offset 0] [from ]
+!124 = metadata !{null, metadata !8, metadata !57, metadata !9, metadata !9, metadata !8, metadata !8, metadata !8, metadata !8}
+!125 = metadata !{metadata !126, metadata !127, metadata !128, metadata !129, metadata !130, metadata !131, metadata !132, metadata !133, metadata !134, metadata !135, metadata !136}
+!126 = metadata !{i32 786689, metadata !122, metadata !"store", metadata !5, i32 16777590, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [store] [line 374]
+!127 = metadata !{i32 786689, metadata !122, metadata !"out_buf", metadata !5, i32 33554806, metadata !57, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [out_buf] [line 374]
+!128 = metadata !{i32 786689, metadata !122, metadata !"width", metadata !5, i32 50332022, metadata !9, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [width] [line 374]
+!129 = metadata !{i32 786689, metadata !122, metadata !"height", metadata !5, i32 67109238, metadata !9, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [height] [line 374]
+!130 = metadata !{i32 786689, metadata !122, metadata !"voffs", metadata !5, i32 83886455, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [voffs] [line 375]
+!131 = metadata !{i32 786689, metadata !122, metadata !"hoffs", metadata !5, i32 100663671, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [hoffs] [line 375]
+!132 = metadata !{i32 786689, metadata !122, metadata !"p_out_vpos", metadata !5, i32 117440887, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [p_out_vpos] [line 375]
+!133 = metadata !{i32 786689, metadata !122, metadata !"p_out_hpos", metadata !5, i32 134218103, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [p_out_hpos] [line 375]
+!134 = metadata !{i32 786688, metadata !122, metadata !"i", metadata !5, i32 379, metadata !9, i32 0, i32 0} ; [ DW_TAG_auto_variable ] [i] [line 379]
+!135 = metadata !{i32 786688, metadata !122, metadata !"e", metadata !5, i32 379, metadata !9, i32 0, i32 0} ; [ DW_TAG_auto_variable ] [e] [line 379]
+!136 = metadata !{i32 786688, metadata !137, metadata !"diff", metadata !5, i32 389, metadata !9, i32 0, i32 0} ; [ DW_TAG_auto_variable ] [diff] [line 389]
+!137 = metadata !{i32 786443, metadata !1, metadata !138, i32 386, i32 0, i32 43} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!138 = metadata !{i32 786443, metadata !1, metadata !139, i32 385, i32 0, i32 42} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!139 = metadata !{i32 786443, metadata !1, metadata !140, i32 384, i32 0, i32 41} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!140 = metadata !{i32 786443, metadata !1, metadata !122, i32 383, i32 0, i32 40} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!141 = metadata !{i32 786478, metadata !1, metadata !5, metadata !"Write4Blocks_f2r_WriteOneBlockExit_s2e_WriteOneBlockExit121", metadata !"Write4Blocks_f2r_WriteOneBlockExit_s2e_WriteOneBlockExit121", metadata !"", i32 417, metadata !142, i1 false, i1 true, i32 0, i32 0, null, i32 256, i1 true, void (i32*, i8*, i32, i32, i32*, i32*)* @Write4Blocks_f2r_WriteOneBlockExit_s2e_WriteOneBlockExit121, null, null, metadata !144, i32 418} ; [ DW_TAG_subprogram ] [line 417] [def] [scope 418] [Write4Blocks_f2r_WriteOneBlockExit_s2e_WriteOneBlockExit121]
+!142 = metadata !{i32 786453, i32 0, null, metadata !"", i32 0, i64 0, i64 0, i64 0, i32 0, null, metadata !143, i32 0, null, null, null} ; [ DW_TAG_subroutine_type ] [line 0, size 0, align 0, offset 0] [from ]
+!143 = metadata !{null, metadata !8, metadata !57, metadata !9, metadata !9, metadata !8, metadata !8}
+!144 = metadata !{metadata !145, metadata !146, metadata !147, metadata !148, metadata !149, metadata !150}
+!145 = metadata !{i32 786689, metadata !141, metadata !"store", metadata !5, i32 16777633, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [store] [line 417]
+!146 = metadata !{i32 786689, metadata !141, metadata !"out_buf", metadata !5, i32 33554849, metadata !57, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [out_buf] [line 417]
+!147 = metadata !{i32 786689, metadata !141, metadata !"width", metadata !5, i32 50332065, metadata !9, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [width] [line 417]
+!148 = metadata !{i32 786689, metadata !141, metadata !"height", metadata !5, i32 67109281, metadata !9, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [height] [line 417]
+!149 = metadata !{i32 786689, metadata !141, metadata !"voffs", metadata !5, i32 83886498, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [voffs] [line 418]
+!150 = metadata !{i32 786689, metadata !141, metadata !"hoffs", metadata !5, i32 100663714, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [hoffs] [line 418]
+!151 = metadata !{i32 786478, metadata !1, metadata !5, metadata !"Write4Blocks_f2r_WriteOneBlockExit121_s2e_WriteOneBlockExit93", metadata !"Write4Blocks_f2r_WriteOneBlockExit121_s2e_WriteOneBlockExit93", metadata !"", i32 424, metadata !142, i1 false, i1 true, i32 0, i32 0, null, i32 256, i1 true, void (i32*, i8*, i32, i32, i32*, i32*)* @Write4Blocks_f2r_WriteOneBlockExit121_s2e_WriteOneBlockExit93, null, null, metadata !152, i32 425} ; [ DW_TAG_subprogram ] [line 424] [def] [scope 425] [Write4Blocks_f2r_WriteOneBlockExit121_s2e_WriteOneBlockExit93]
+!152 = metadata !{metadata !153, metadata !154, metadata !155, metadata !156, metadata !157, metadata !158}
+!153 = metadata !{i32 786689, metadata !151, metadata !"store", metadata !5, i32 16777640, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [store] [line 424]
+!154 = metadata !{i32 786689, metadata !151, metadata !"out_buf", metadata !5, i32 33554856, metadata !57, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [out_buf] [line 424]
+!155 = metadata !{i32 786689, metadata !151, metadata !"width", metadata !5, i32 50332072, metadata !9, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [width] [line 424]
+!156 = metadata !{i32 786689, metadata !151, metadata !"height", metadata !5, i32 67109288, metadata !9, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [height] [line 424]
+!157 = metadata !{i32 786689, metadata !151, metadata !"voffs", metadata !5, i32 83886505, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [voffs] [line 425]
+!158 = metadata !{i32 786689, metadata !151, metadata !"hoffs", metadata !5, i32 100663721, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [hoffs] [line 425]
+!159 = metadata !{i32 786478, metadata !1, metadata !5, metadata !"Write4Blocks_f2r_WriteOneBlockExit93_s2e_WriteOneBlockExit65", metadata !"Write4Blocks_f2r_WriteOneBlockExit93_s2e_WriteOneBlockExit65", metadata !"", i32 432, metadata !142, i1 false, i1 true, i32 0, i32 0, null, i32 256, i1 true, void (i32*, i8*, i32, i32, i32*, i32*)* @Write4Blocks_f2r_WriteOneBlockExit93_s2e_WriteOneBlockExit65, null, null, metadata !160, i32 433} ; [ DW_TAG_subprogram ] [line 432] [def] [scope 433] [Write4Blocks_f2r_WriteOneBlockExit93_s2e_WriteOneBlockExit65]
+!160 = metadata !{metadata !161, metadata !162, metadata !163, metadata !164, metadata !165, metadata !166}
+!161 = metadata !{i32 786689, metadata !159, metadata !"store", metadata !5, i32 16777648, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [store] [line 432]
+!162 = metadata !{i32 786689, metadata !159, metadata !"out_buf", metadata !5, i32 33554864, metadata !57, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [out_buf] [line 432]
+!163 = metadata !{i32 786689, metadata !159, metadata !"width", metadata !5, i32 50332080, metadata !9, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [width] [line 432]
+!164 = metadata !{i32 786689, metadata !159, metadata !"height", metadata !5, i32 67109296, metadata !9, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [height] [line 432]
+!165 = metadata !{i32 786689, metadata !159, metadata !"voffs", metadata !5, i32 83886513, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [voffs] [line 433]
+!166 = metadata !{i32 786689, metadata !159, metadata !"hoffs", metadata !5, i32 100663729, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [hoffs] [line 433]
+!167 = metadata !{i32 786478, metadata !1, metadata !5, metadata !"Write4Blocks_f2r_Write4Blocks", metadata !"Write4Blocks_f2r_Write4Blocks", metadata !"", i32 442, metadata !168, i1 false, i1 true, i32 0, i32 0, null, i32 256, i1 true, void (i32*, i32*, i32*, i32*, i32*, i32*, i8*, i16, i16, i32)* @Write4Blocks_f2r_Write4Blocks, null, null, metadata !170, i32 445} ; [ DW_TAG_subprogram ] [line 442] [def] [scope 445] [Write4Blocks_f2r_Write4Blocks]
+!168 = metadata !{i32 786453, i32 0, null, metadata !"", i32 0, i64 0, i64 0, i64 0, i32 0, null, metadata !169, i32 0, null, null, null} ; [ DW_TAG_subroutine_type ] [line 0, size 0, align 0, offset 0] [from ]
+!169 = metadata !{null, metadata !8, metadata !8, metadata !8, metadata !8, metadata !8, metadata !8, metadata !57, metadata !111, metadata !111, metadata !9}
+!170 = metadata !{metadata !171, metadata !172, metadata !173, metadata !174, metadata !175, metadata !176, metadata !177, metadata !178, metadata !179, metadata !180, metadata !181, metadata !182}
+!171 = metadata !{i32 786689, metadata !167, metadata !"store1", metadata !5, i32 16777658, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [store1] [line 442]
+!172 = metadata !{i32 786689, metadata !167, metadata !"store2", metadata !5, i32 33554874, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [store2] [line 442]
+!173 = metadata !{i32 786689, metadata !167, metadata !"store3", metadata !5, i32 50332090, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [store3] [line 442]
+!174 = metadata !{i32 786689, metadata !167, metadata !"store4", metadata !5, i32 67109306, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [store4] [line 442]
+!175 = metadata !{i32 786689, metadata !167, metadata !"p_out_vpos", metadata !5, i32 83886523, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [p_out_vpos] [line 443]
+!176 = metadata !{i32 786689, metadata !167, metadata !"p_out_hpos", metadata !5, i32 100663739, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [p_out_hpos] [line 443]
+!177 = metadata !{i32 786689, metadata !167, metadata !"p_out_buf", metadata !5, i32 117440955, metadata !57, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [p_out_buf] [line 443]
+!178 = metadata !{i32 786689, metadata !167, metadata !"p_jinfo_image_width", metadata !5, i32 134218172, metadata !111, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [p_jinfo_image_width] [line 444]
+!179 = metadata !{i32 786689, metadata !167, metadata !"p_jinfo_image_height", metadata !5, i32 150995388, metadata !111, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [p_jinfo_image_height] [line 444]
+!180 = metadata !{i32 786689, metadata !167, metadata !"p_jinfo_MCUWidth", metadata !5, i32 167772604, metadata !9, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [p_jinfo_MCUWidth] [line 444]
+!181 = metadata !{i32 786688, metadata !167, metadata !"voffs", metadata !5, i32 446, metadata !9, i32 0, i32 0} ; [ DW_TAG_auto_variable ] [voffs] [line 446]
+!182 = metadata !{i32 786688, metadata !167, metadata !"hoffs", metadata !5, i32 446, metadata !9, i32 0, i32 0} ; [ DW_TAG_auto_variable ] [hoffs] [line 446]
+!183 = metadata !{i32 786478, metadata !1, metadata !5, metadata !"YuvToRgb_f2r_forBody", metadata !"YuvToRgb_f2r_forBody", metadata !"", i32 511, metadata !184, i1 false, i1 true, i32 0, i32 0, null, i32 256, i1 true, void (i32, i32*, i32*, i32*, [3 x [64 x i32]]*, i32*, i32*, i32*, i32*, i32*, i32*, i32)* @YuvToRgb_f2r_forBody, null, null, metadata !191, i32 512} ; [ DW_TAG_subprogram ] [line 511] [def] [scope 512] [YuvToRgb_f2r_forBody]
+!184 = metadata !{i32 786453, i32 0, null, metadata !"", i32 0, i64 0, i64 0, i64 0, i32 0, null, metadata !185, i32 0, null, null, null} ; [ DW_TAG_subroutine_type ] [line 0, size 0, align 0, offset 0] [from ]
+!185 = metadata !{null, metadata !9, metadata !8, metadata !8, metadata !8, metadata !186, metadata !8, metadata !8, metadata !8, metadata !8, metadata !8, metadata !8, metadata !9}
+!186 = metadata !{i32 786447, null, null, metadata !"", i32 0, i64 64, i64 64, i64 0, i32 0, metadata !187} ; [ DW_TAG_pointer_type ] [line 0, size 64, align 64, offset 0] [from ]
+!187 = metadata !{i32 786433, null, null, metadata !"", i32 0, i64 6144, i64 32, i32 0, i32 0, metadata !9, metadata !188, i32 0, null, null, null} ; [ DW_TAG_array_type ] [line 0, size 6144, align 32, offset 0] [from int]
+!188 = metadata !{metadata !189, metadata !190}
+!189 = metadata !{i32 786465, i64 0, i64 3}       ; [ DW_TAG_subrange_type ] [0, 2]
+!190 = metadata !{i32 786465, i64 0, i64 64}      ; [ DW_TAG_subrange_type ] [0, 63]
+!191 = metadata !{metadata !192, metadata !193, metadata !194, metadata !195, metadata !196, metadata !197, metadata !198, metadata !199, metadata !200, metadata !201, metadata !202, metadata !203}
+!192 = metadata !{i32 786689, metadata !183, metadata !"p", metadata !5, i32 16777727, metadata !9, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [p] [line 511]
+!193 = metadata !{i32 786689, metadata !183, metadata !"y_buf", metadata !5, i32 33554943, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [y_buf] [line 511]
+!194 = metadata !{i32 786689, metadata !183, metadata !"u_buf", metadata !5, i32 50332159, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [u_buf] [line 511]
+!195 = metadata !{i32 786689, metadata !183, metadata !"v_buf", metadata !5, i32 67109375, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [v_buf] [line 511]
+!196 = metadata !{i32 786689, metadata !183, metadata !"rgb_buf", metadata !5, i32 83886591, metadata !186, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [rgb_buf] [line 511]
+!197 = metadata !{i32 786689, metadata !183, metadata !"r", metadata !5, i32 100663808, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [r] [line 512]
+!198 = metadata !{i32 786689, metadata !183, metadata !"g", metadata !5, i32 117441024, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [g] [line 512]
+!199 = metadata !{i32 786689, metadata !183, metadata !"b", metadata !5, i32 134218240, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [b] [line 512]
+!200 = metadata !{i32 786689, metadata !183, metadata !"y", metadata !5, i32 150995456, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [y] [line 512]
+!201 = metadata !{i32 786689, metadata !183, metadata !"u", metadata !5, i32 167772672, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [u] [line 512]
+!202 = metadata !{i32 786689, metadata !183, metadata !"v", metadata !5, i32 184549888, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [v] [line 512]
+!203 = metadata !{i32 786689, metadata !183, metadata !"i", metadata !5, i32 201327104, metadata !9, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [i] [line 512]
+!204 = metadata !{i32 786478, metadata !1, metadata !5, metadata !"YuvToRgb_f2r_forBody_s2e_forEndLoopexit", metadata !"YuvToRgb_f2r_forBody_s2e_forEndLoopexit", metadata !"", i32 543, metadata !205, i1 false, i1 true, i32 0, i32 0, null, i32 256, i1 true, void (i32, i32*, i32*, i32*, [3 x [64 x i32]]*, i32*, i32*, i32*, i32*, i32*, i32*)* @YuvToRgb_f2r_forBody_s2e_forEndLoopexit, null, null, metadata !207, i32 544} ; [ DW_TAG_subprogram ] [line 543] [def] [scope 544] [YuvToRgb_f2r_forBody_s2e_forEndLoopexit]
+!205 = metadata !{i32 786453, i32 0, null, metadata !"", i32 0, i64 0, i64 0, i64 0, i32 0, null, metadata !206, i32 0, null, null, null} ; [ DW_TAG_subroutine_type ] [line 0, size 0, align 0, offset 0] [from ]
+!206 = metadata !{null, metadata !9, metadata !8, metadata !8, metadata !8, metadata !186, metadata !8, metadata !8, metadata !8, metadata !8, metadata !8, metadata !8}
+!207 = metadata !{metadata !208, metadata !209, metadata !210, metadata !211, metadata !212, metadata !213, metadata !214, metadata !215, metadata !216, metadata !217, metadata !218, metadata !219}
+!208 = metadata !{i32 786689, metadata !204, metadata !"p", metadata !5, i32 16777759, metadata !9, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [p] [line 543]
+!209 = metadata !{i32 786689, metadata !204, metadata !"y_buf", metadata !5, i32 33554975, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [y_buf] [line 543]
+!210 = metadata !{i32 786689, metadata !204, metadata !"u_buf", metadata !5, i32 50332191, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [u_buf] [line 543]
+!211 = metadata !{i32 786689, metadata !204, metadata !"v_buf", metadata !5, i32 67109407, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [v_buf] [line 543]
+!212 = metadata !{i32 786689, metadata !204, metadata !"rgb_buf", metadata !5, i32 83886623, metadata !186, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [rgb_buf] [line 543]
+!213 = metadata !{i32 786689, metadata !204, metadata !"r", metadata !5, i32 100663840, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [r] [line 544]
+!214 = metadata !{i32 786689, metadata !204, metadata !"g", metadata !5, i32 117441056, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [g] [line 544]
+!215 = metadata !{i32 786689, metadata !204, metadata !"b", metadata !5, i32 134218272, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [b] [line 544]
+!216 = metadata !{i32 786689, metadata !204, metadata !"y", metadata !5, i32 150995488, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [y] [line 544]
+!217 = metadata !{i32 786689, metadata !204, metadata !"u", metadata !5, i32 167772704, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [u] [line 544]
+!218 = metadata !{i32 786689, metadata !204, metadata !"v", metadata !5, i32 184549920, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [v] [line 544]
+!219 = metadata !{i32 786688, metadata !204, metadata !"i", metadata !5, i32 545, metadata !9, i32 0, i32 0} ; [ DW_TAG_auto_variable ] [i] [line 545]
+!220 = metadata !{i32 786478, metadata !1, metadata !5, metadata !"YuvToRgb_f2r_entry_s2e_forEnd", metadata !"YuvToRgb_f2r_entry_s2e_forEnd", metadata !"", i32 581, metadata !221, i1 false, i1 true, i32 0, i32 0, null, i32 256, i1 true, void (i32, i32*, i32*, i32*, [3 x [64 x i32]]*)* @YuvToRgb_f2r_entry_s2e_forEnd, null, null, metadata !223, i32 581} ; [ DW_TAG_subprogram ] [line 581] [def] [YuvToRgb_f2r_entry_s2e_forEnd]
+!221 = metadata !{i32 786453, i32 0, null, metadata !"", i32 0, i64 0, i64 0, i64 0, i32 0, null, metadata !222, i32 0, null, null, null} ; [ DW_TAG_subroutine_type ] [line 0, size 0, align 0, offset 0] [from ]
+!222 = metadata !{null, metadata !9, metadata !8, metadata !8, metadata !8, metadata !186}
+!223 = metadata !{metadata !224, metadata !225, metadata !226, metadata !227, metadata !228, metadata !229, metadata !230, metadata !231, metadata !232, metadata !233, metadata !234}
+!224 = metadata !{i32 786689, metadata !220, metadata !"p", metadata !5, i32 16777797, metadata !9, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [p] [line 581]
+!225 = metadata !{i32 786689, metadata !220, metadata !"y_buf", metadata !5, i32 33555013, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [y_buf] [line 581]
+!226 = metadata !{i32 786689, metadata !220, metadata !"u_buf", metadata !5, i32 50332229, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [u_buf] [line 581]
+!227 = metadata !{i32 786689, metadata !220, metadata !"v_buf", metadata !5, i32 67109445, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [v_buf] [line 581]
+!228 = metadata !{i32 786689, metadata !220, metadata !"rgb_buf", metadata !5, i32 83886661, metadata !186, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [rgb_buf] [line 581]
+!229 = metadata !{i32 786688, metadata !220, metadata !"r", metadata !5, i32 582, metadata !9, i32 0, i32 0} ; [ DW_TAG_auto_variable ] [r] [line 582]
+!230 = metadata !{i32 786688, metadata !220, metadata !"g", metadata !5, i32 582, metadata !9, i32 0, i32 0} ; [ DW_TAG_auto_variable ] [g] [line 582]
+!231 = metadata !{i32 786688, metadata !220, metadata !"b", metadata !5, i32 582, metadata !9, i32 0, i32 0} ; [ DW_TAG_auto_variable ] [b] [line 582]
+!232 = metadata !{i32 786688, metadata !220, metadata !"y", metadata !5, i32 583, metadata !9, i32 0, i32 0} ; [ DW_TAG_auto_variable ] [y] [line 583]
+!233 = metadata !{i32 786688, metadata !220, metadata !"u", metadata !5, i32 583, metadata !9, i32 0, i32 0} ; [ DW_TAG_auto_variable ] [u] [line 583]
+!234 = metadata !{i32 786688, metadata !220, metadata !"v", metadata !5, i32 583, metadata !9, i32 0, i32 0} ; [ DW_TAG_auto_variable ] [v] [line 583]
+!235 = metadata !{i32 786478, metadata !1, metadata !5, metadata !"YuvToRgb_f2r_YuvToRgb", metadata !"YuvToRgb_f2r_YuvToRgb", metadata !"", i32 623, metadata !221, i1 false, i1 true, i32 0, i32 0, null, i32 256, i1 true, void (i32, i32*, i32*, i32*, [3 x [64 x i32]]*)* @YuvToRgb_f2r_YuvToRgb, null, null, metadata !236, i32 624} ; [ DW_TAG_subprogram ] [line 623] [def] [scope 624] [YuvToRgb_f2r_YuvToRgb]
+!236 = metadata !{metadata !237, metadata !238, metadata !239, metadata !240, metadata !241}
+!237 = metadata !{i32 786689, metadata !235, metadata !"p", metadata !5, i32 16777839, metadata !9, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [p] [line 623]
+!238 = metadata !{i32 786689, metadata !235, metadata !"y_buf", metadata !5, i32 33555055, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [y_buf] [line 623]
+!239 = metadata !{i32 786689, metadata !235, metadata !"u_buf", metadata !5, i32 50332271, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [u_buf] [line 623]
+!240 = metadata !{i32 786689, metadata !235, metadata !"v_buf", metadata !5, i32 67109487, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [v_buf] [line 623]
+!241 = metadata !{i32 786689, metadata !235, metadata !"rgb_buf", metadata !5, i32 83886703, metadata !186, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [rgb_buf] [line 623]
+!242 = metadata !{i32 786478, metadata !1, metadata !5, metadata !"decode_block_f2r_forBodyI11_s2e_BoundIDctMatrixExit", metadata !"decode_block_f2r_forBodyI11_s2e_BoundIDctMatrixExit", metadata !"", i32 667, metadata !39, i1 false, i1 true, i32 0, i32 0, null, i32 256, i1 true, void (i32*, i32)* @decode_block_f2r_forBodyI11_s2e_BoundIDctMatrixExit, null, null, metadata !243, i32 667} ; [ DW_TAG_subprogram ] [line 667] [def] [decode_block_f2r_forBodyI11_s2e_BoundIDctMatrixExit]
+!243 = metadata !{metadata !244, metadata !245}
+!244 = metadata !{i32 786689, metadata !242, metadata !"out_buf", metadata !5, i32 16777883, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [out_buf] [line 667]
+!245 = metadata !{i32 786689, metadata !242, metadata !"Bound", metadata !5, i32 33555099, metadata !9, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [Bound] [line 667]
+!246 = metadata !{i32 786478, metadata !1, metadata !5, metadata !"decode_block", metadata !"decode_block", metadata !"", i32 673, metadata !247, i1 false, i1 true, i32 0, i32 0, null, i32 256, i1 true, void (i32, i32*, i32*, [64 x i32]*, i8*, i8*, [257 x i32]*, i32*, [36 x i32]*, [36 x i32]*, [36 x i32]*, i8*, [257 x i32]*, i32*, [36 x i32]*, [36 x i32]*, [36 x i32]*)* @decode_block, null, null, metadata !262, i32 678} ; [ DW_TAG_subprogram ] [line 673] [def] [scope 678] [decode_block]
+!247 = metadata !{i32 786453, i32 0, null, metadata !"", i32 0, i64 0, i64 0, i64 0, i32 0, null, metadata !248, i32 0, null, null, null} ; [ DW_TAG_subroutine_type ] [line 0, size 0, align 0, offset 0] [from ]
+!248 = metadata !{null, metadata !9, metadata !8, metadata !8, metadata !249, metadata !252, metadata !252, metadata !254, metadata !8, metadata !258, metadata !258, metadata !258, metadata !57, metadata !254, metadata !8, metadata !258, metadata !258, metadata !258}
+!249 = metadata !{i32 786447, null, null, metadata !"", i32 0, i64 64, i64 64, i64 0, i32 0, metadata !250} ; [ DW_TAG_pointer_type ] [line 0, size 64, align 64, offset 0] [from ]
+!250 = metadata !{i32 786433, null, null, metadata !"", i32 0, i64 2048, i64 32, i32 0, i32 0, metadata !22, metadata !251, i32 0, null, null, null} ; [ DW_TAG_array_type ] [line 0, size 2048, align 32, offset 0] [from unsigned int]
+!251 = metadata !{metadata !190}
+!252 = metadata !{i32 786447, null, null, metadata !"", i32 0, i64 64, i64 64, i64 0, i32 0, metadata !253} ; [ DW_TAG_pointer_type ] [line 0, size 64, align 64, offset 0] [from char]
+!253 = metadata !{i32 786468, null, null, metadata !"char", i32 0, i64 8, i64 8, i64 0, i32 0, i32 6} ; [ DW_TAG_base_type ] [char] [line 0, size 8, align 8, offset 0, enc DW_ATE_signed_char]
+!254 = metadata !{i32 786447, null, null, metadata !"", i32 0, i64 64, i64 64, i64 0, i32 0, metadata !255} ; [ DW_TAG_pointer_type ] [line 0, size 64, align 64, offset 0] [from ]
+!255 = metadata !{i32 786433, null, null, metadata !"", i32 0, i64 8224, i64 32, i32 0, i32 0, metadata !9, metadata !256, i32 0, null, null, null} ; [ DW_TAG_array_type ] [line 0, size 8224, align 32, offset 0] [from int]
+!256 = metadata !{metadata !257}
+!257 = metadata !{i32 786465, i64 0, i64 257}     ; [ DW_TAG_subrange_type ] [0, 256]
+!258 = metadata !{i32 786447, null, null, metadata !"", i32 0, i64 64, i64 64, i64 0, i32 0, metadata !259} ; [ DW_TAG_pointer_type ] [line 0, size 64, align 64, offset 0] [from ]
+!259 = metadata !{i32 786433, null, null, metadata !"", i32 0, i64 1152, i64 32, i32 0, i32 0, metadata !9, metadata !260, i32 0, null, null, null} ; [ DW_TAG_array_type ] [line 0, size 1152, align 32, offset 0] [from int]
+!260 = metadata !{metadata !261}
+!261 = metadata !{i32 786465, i64 0, i64 36}      ; [ DW_TAG_subrange_type ] [0, 35]
+!262 = metadata !{metadata !263, metadata !264, metadata !265, metadata !266, metadata !267, metadata !268, metadata !269, metadata !270, metadata !271, metadata !272, metadata !273, metadata !274, metadata !275, metadata !276, metadata !277, metadata !278, metadata !279, metadata !280, metadata !282}
+!263 = metadata !{i32 786689, metadata !246, metadata !"comp_no", metadata !5, i32 16777889, metadata !9, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [comp_no] [line 673]
+!264 = metadata !{i32 786689, metadata !246, metadata !"out_buf", metadata !5, i32 33555105, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [out_buf] [line 673]
+!265 = metadata !{i32 786689, metadata !246, metadata !"HuffBuff", metadata !5, i32 50332321, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [HuffBuff] [line 673]
+!266 = metadata !{i32 786689, metadata !246, metadata !"p_jinfo_quant_tbl_quantval", metadata !5, i32 67109537, metadata !249, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [p_jinfo_quant_tbl_quantval] [line 673]
+!267 = metadata !{i32 786689, metadata !246, metadata !"p_jinfo_comps_info_quant_tbl_no", metadata !5, i32 83886753, metadata !252, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [p_jinfo_comps_info_quant_tbl_no] [line 673]
+!268 = metadata !{i32 786689, metadata !246, metadata !"p_jinfo_comps_info_dc_tbl_no", metadata !5, i32 100663970, metadata !252, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [p_jinfo_comps_info_dc_tbl_no] [line 674]
+!269 = metadata !{i32 786689, metadata !246, metadata !"p_jinfo_dc_xhuff_tbl_huffval", metadata !5, i32 117441186, metadata !254, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [p_jinfo_dc_xhuff_tbl_huffval] [line 674]
+!270 = metadata !{i32 786689, metadata !246, metadata !"p_jinfo_dc_dhuff_tbl_ml", metadata !5, i32 134218403, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [p_jinfo_dc_dhuff_tbl_ml] [line 675]
+!271 = metadata !{i32 786689, metadata !246, metadata !"p_jinfo_dc_dhuff_tbl_maxcode", metadata !5, i32 150995619, metadata !258, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [p_jinfo_dc_dhuff_tbl_maxcode] [line 675]
+!272 = metadata !{i32 786689, metadata !246, metadata !"p_jinfo_dc_dhuff_tbl_mincode", metadata !5, i32 167772835, metadata !258, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [p_jinfo_dc_dhuff_tbl_mincode] [line 675]
+!273 = metadata !{i32 786689, metadata !246, metadata !"p_jinfo_dc_dhuff_tbl_valptr", metadata !5, i32 184550051, metadata !258, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [p_jinfo_dc_dhuff_tbl_valptr] [line 675]
+!274 = metadata !{i32 786689, metadata !246, metadata !"CurHuffReadBuf", metadata !5, i32 201327268, metadata !57, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [CurHuffReadBuf] [line 676]
+!275 = metadata !{i32 786689, metadata !246, metadata !"p_jinfo_ac_xhuff_tbl_huffval", metadata !5, i32 218104484, metadata !254, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [p_jinfo_ac_xhuff_tbl_huffval] [line 676]
+!276 = metadata !{i32 786689, metadata !246, metadata !"p_jinfo_ac_dhuff_tbl_ml", metadata !5, i32 234881700, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [p_jinfo_ac_dhuff_tbl_ml] [line 676]
+!277 = metadata !{i32 786689, metadata !246, metadata !"p_jinfo_ac_dhuff_tbl_maxcode", metadata !5, i32 251658916, metadata !258, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [p_jinfo_ac_dhuff_tbl_maxcode] [line 676]
+!278 = metadata !{i32 786689, metadata !246, metadata !"p_jinfo_ac_dhuff_tbl_mincode", metadata !5, i32 268436132, metadata !258, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [p_jinfo_ac_dhuff_tbl_mincode] [line 676]
+!279 = metadata !{i32 786689, metadata !246, metadata !"p_jinfo_ac_dhuff_tbl_valptr", metadata !5, i32 285213349, metadata !258, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [p_jinfo_ac_dhuff_tbl_valptr] [line 677]
+!280 = metadata !{i32 786688, metadata !246, metadata !"QuantBuff", metadata !5, i32 679, metadata !281, i32 0, i32 0} ; [ DW_TAG_auto_variable ] [QuantBuff] [line 679]
+!281 = metadata !{i32 786433, null, null, metadata !"", i32 0, i64 2048, i64 32, i32 0, i32 0, metadata !9, metadata !251, i32 0, null, null, null} ; [ DW_TAG_array_type ] [line 0, size 2048, align 32, offset 0] [from int]
+!282 = metadata !{i32 786688, metadata !246, metadata !"p_quant_tbl", metadata !5, i32 680, metadata !21, i32 0, i32 0} ; [ DW_TAG_auto_variable ] [p_quant_tbl] [line 680]
+!283 = metadata !{i32 786478, metadata !1, metadata !5, metadata !"decode_start_f2r_vectorBody_s2e_YuvToRgbExit324", metadata !"decode_start_f2r_vectorBody_s2e_YuvToRgbExit324", metadata !"", i32 703, metadata !221, i1 false, i1 true, i32 0, i32 0, null, i32 256, i1 true, void (i32, i32*, i32*, i32*, [3 x [64 x i32]]*)* @decode_start_f2r_vectorBody_s2e_YuvToRgbExit324, null, null, metadata !284, i32 703} ; [ DW_TAG_subprogram ] [line 703] [def] [decode_start_f2r_vectorBody_s2e_YuvToRgbExit324]
+!284 = metadata !{metadata !285, metadata !286, metadata !287, metadata !288, metadata !289}
+!285 = metadata !{i32 786689, metadata !283, metadata !"i", metadata !5, i32 16777919, metadata !9, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [i] [line 703]
+!286 = metadata !{i32 786689, metadata !283, metadata !"y_buf", metadata !5, i32 33555135, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [y_buf] [line 703]
+!287 = metadata !{i32 786689, metadata !283, metadata !"u_buf", metadata !5, i32 50332351, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [u_buf] [line 703]
+!288 = metadata !{i32 786689, metadata !283, metadata !"v_buf", metadata !5, i32 67109567, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [v_buf] [line 703]
+!289 = metadata !{i32 786689, metadata !283, metadata !"rgb_buf", metadata !5, i32 83886783, metadata !186, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [rgb_buf] [line 703]
+!290 = metadata !{i32 786478, metadata !1, metadata !5, metadata !"decode_start_f2r_vectorPh_s2e_forBody96Preheader", metadata !"decode_start_f2r_vectorPh_s2e_forBody96Preheader", metadata !"", i32 707, metadata !221, i1 false, i1 true, i32 0, i32 0, null, i32 256, i1 true, void (i32, i32*, i32*, i32*, [3 x [64 x i32]]*)* @decode_start_f2r_vectorPh_s2e_forBody96Preheader, null, null, metadata !291, i32 707} ; [ DW_TAG_subprogram ] [line 707] [def] [decode_start_f2r_vectorPh_s2e_forBody96Preheader]
+!291 = metadata !{metadata !292, metadata !293, metadata !294, metadata !295, metadata !296}
+!292 = metadata !{i32 786689, metadata !290, metadata !"i", metadata !5, i32 16777923, metadata !9, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [i] [line 707]
+!293 = metadata !{i32 786689, metadata !290, metadata !"y_buf", metadata !5, i32 33555139, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [y_buf] [line 707]
+!294 = metadata !{i32 786689, metadata !290, metadata !"u_buf", metadata !5, i32 50332355, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [u_buf] [line 707]
+!295 = metadata !{i32 786689, metadata !290, metadata !"v_buf", metadata !5, i32 67109571, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [v_buf] [line 707]
+!296 = metadata !{i32 786689, metadata !290, metadata !"rgb_buf", metadata !5, i32 83886787, metadata !186, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [rgb_buf] [line 707]
+!297 = metadata !{i32 786478, metadata !1, metadata !5, metadata !"decode_start", metadata !"decode_start", metadata !"", i32 716, metadata !298, i1 false, i1 true, i32 0, i32 0, null, i32 256, i1 true, void (i32*, i32*, i32*, i32*, [64 x i32]*, i8*, i8*, i8*, i16, i16, i32, i32, i32, i8*, [257 x i32]*, i32*, [36 x i32]*, [36 x i32]*, [36 x i32]*, [3 x [64 x i32]]*, [5310 x i8]*, [257 x i32]*, i32*, [36 x i32]*, [36 x i32]*, [36 x i32]*)* @decode_start, null, null, metadata !304, i32 725} ; [ DW_TAG_subprogram ] [line 716] [def] [scope 725] [decode_start]
+!298 = metadata !{i32 786453, i32 0, null, metadata !"", i32 0, i64 0, i64 0, i64 0, i32 0, null, metadata !299, i32 0, null, null, null} ; [ DW_TAG_subroutine_type ] [line 0, size 0, align 0, offset 0] [from ]
+!299 = metadata !{null, metadata !8, metadata !8, metadata !8, metadata !8, metadata !249, metadata !252, metadata !57, metadata !57, metadata !111, metadata !111, metadata !9, metadata !9, metadata !9, metadata !252, metadata !254, metadata !8, metadata !258, metadata !258, metadata !258, metadata !186, metadata !300, metadata !254, metadata !8, metadata !258, metadata !258, metadata !258}
+!300 = metadata !{i32 786447, null, null, metadata !"", i32 0, i64 64, i64 64, i64 0, i32 0, metadata !301} ; [ DW_TAG_pointer_type ] [line 0, size 64, align 64, offset 0] [from ]
+!301 = metadata !{i32 786433, null, null, metadata !"", i32 0, i64 42480, i64 8, i32 0, i32 0, metadata !58, metadata !302, i32 0, null, null, null} ; [ DW_TAG_array_type ] [line 0, size 42480, align 8, offset 0] [from unsigned char]
+!302 = metadata !{metadata !303}
+!303 = metadata !{i32 786465, i64 0, i64 5310}    ; [ DW_TAG_subrange_type ] [0, 5309]
+!304 = metadata !{metadata !305, metadata !306, metadata !307, metadata !308, metadata !309, metadata !310, metadata !311, metadata !312, metadata !313, metadata !314, metadata !315, metadata !316, metadata !317, metadata !318, metadata !319, metadata !320, metadata !321, metadata !322, metadata !323, metadata !324, metadata !325, metadata !326, metadata !327, metadata !328, metadata !329, metadata !330, metadata !331, metadata !332, metadata !333, metadata !334}
+!305 = metadata !{i32 786689, metadata !297, metadata !"out_data_image_width", metadata !5, i32 16777932, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [out_data_image_width] [line 716]
+!306 = metadata !{i32 786689, metadata !297, metadata !"out_data_image_height", metadata !5, i32 33555148, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [out_data_image_height] [line 716]
+!307 = metadata !{i32 786689, metadata !297, metadata !"out_data_comp_vpos", metadata !5, i32 50332365, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [out_data_comp_vpos] [line 717]
+!308 = metadata !{i32 786689, metadata !297, metadata !"out_data_comp_hpos", metadata !5, i32 67109581, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [out_data_comp_hpos] [line 717]
+!309 = metadata !{i32 786689, metadata !297, metadata !"p_jinfo_quant_tbl_quantval", metadata !5, i32 83886798, metadata !249, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [p_jinfo_quant_tbl_quantval] [line 718]
+!310 = metadata !{i32 786689, metadata !297, metadata !"p_jinfo_comps_info_quant_tbl_no", metadata !5, i32 100664014, metadata !252, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [p_jinfo_comps_info_quant_tbl_no] [line 718]
+!311 = metadata !{i32 786689, metadata !297, metadata !"CurHuffReadBuf", metadata !5, i32 117441231, metadata !57, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [CurHuffReadBuf] [line 719]
+!312 = metadata !{i32 786689, metadata !297, metadata !"p_jinfo_jpeg_data", metadata !5, i32 134218447, metadata !57, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [p_jinfo_jpeg_data] [line 719]
+!313 = metadata !{i32 786689, metadata !297, metadata !"p_jinfo_image_width", metadata !5, i32 150995663, metadata !111, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [p_jinfo_image_width] [line 719]
+!314 = metadata !{i32 786689, metadata !297, metadata !"p_jinfo_image_height", metadata !5, i32 167772879, metadata !111, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [p_jinfo_image_height] [line 719]
+!315 = metadata !{i32 786689, metadata !297, metadata !"p_jinfo_MCUWidth", metadata !5, i32 184550095, metadata !9, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [p_jinfo_MCUWidth] [line 719]
+!316 = metadata !{i32 786689, metadata !297, metadata !"p_jinfo_smp_fact", metadata !5, i32 201327312, metadata !9, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [p_jinfo_smp_fact] [line 720]
+!317 = metadata !{i32 786689, metadata !297, metadata !"p_jinfo_NumMCU", metadata !5, i32 218104528, metadata !9, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [p_jinfo_NumMCU] [line 720]
+!318 = metadata !{i32 786689, metadata !297, metadata !"p_jinfo_comps_info_dc_tbl_no", metadata !5, i32 234881745, metadata !252, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [p_jinfo_comps_info_dc_tbl_no] [line 721]
+!319 = metadata !{i32 786689, metadata !297, metadata !"p_jinfo_dc_xhuff_tbl_huffval", metadata !5, i32 251658961, metadata !254, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [p_jinfo_dc_xhuff_tbl_huffval] [line 721]
+!320 = metadata !{i32 786689, metadata !297, metadata !"p_jinfo_dc_dhuff_tbl_ml", metadata !5, i32 268436177, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [p_jinfo_dc_dhuff_tbl_ml] [line 721]
+!321 = metadata !{i32 786689, metadata !297, metadata !"p_jinfo_dc_dhuff_tbl_maxcode", metadata !5, i32 285213394, metadata !258, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [p_jinfo_dc_dhuff_tbl_maxcode] [line 722]
+!322 = metadata !{i32 786689, metadata !297, metadata !"p_jinfo_dc_dhuff_tbl_mincode", metadata !5, i32 301990610, metadata !258, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [p_jinfo_dc_dhuff_tbl_mincode] [line 722]
+!323 = metadata !{i32 786689, metadata !297, metadata !"p_jinfo_dc_dhuff_tbl_valptr", metadata !5, i32 318767826, metadata !258, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [p_jinfo_dc_dhuff_tbl_valptr] [line 722]
+!324 = metadata !{i32 786689, metadata !297, metadata !"rgb_buf", metadata !5, i32 335545043, metadata !186, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [rgb_buf] [line 723]
+!325 = metadata !{i32 786689, metadata !297, metadata !"OutData_comp_buf", metadata !5, i32 352322259, metadata !300, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [OutData_comp_buf] [line 723]
+!326 = metadata !{i32 786689, metadata !297, metadata !"p_jinfo_ac_xhuff_tbl_huffval", metadata !5, i32 369099475, metadata !254, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [p_jinfo_ac_xhuff_tbl_huffval] [line 723]
+!327 = metadata !{i32 786689, metadata !297, metadata !"p_jinfo_ac_dhuff_tbl_ml", metadata !5, i32 385876691, metadata !8, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [p_jinfo_ac_dhuff_tbl_ml] [line 723]
+!328 = metadata !{i32 786689, metadata !297, metadata !"p_jinfo_ac_dhuff_tbl_maxcode", metadata !5, i32 402653907, metadata !258, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [p_jinfo_ac_dhuff_tbl_maxcode] [line 723]
+!329 = metadata !{i32 786689, metadata !297, metadata !"p_jinfo_ac_dhuff_tbl_mincode", metadata !5, i32 419431123, metadata !258, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [p_jinfo_ac_dhuff_tbl_mincode] [line 723]
+!330 = metadata !{i32 786689, metadata !297, metadata !"p_jinfo_ac_dhuff_tbl_valptr", metadata !5, i32 436208340, metadata !258, i32 0, i32 0} ; [ DW_TAG_arg_variable ] [p_jinfo_ac_dhuff_tbl_valptr] [line 724]
+!331 = metadata !{i32 786688, metadata !297, metadata !"i", metadata !5, i32 726, metadata !9, i32 0, i32 0} ; [ DW_TAG_auto_variable ] [i] [line 726]
+!332 = metadata !{i32 786688, metadata !297, metadata !"CurrentMCU", metadata !5, i32 727, metadata !9, i32 0, i32 0} ; [ DW_TAG_auto_variable ] [CurrentMCU] [line 727]
+!333 = metadata !{i32 786688, metadata !297, metadata !"HuffBuff", metadata !5, i32 728, metadata !187, i32 0, i32 0} ; [ DW_TAG_auto_variable ] [HuffBuff] [line 728]
+!334 = metadata !{i32 786688, metadata !297, metadata !"IDCTBuff", metadata !5, i32 729, metadata !335, i32 0, i32 0} ; [ DW_TAG_auto_variable ] [IDCTBuff] [line 729]
+!335 = metadata !{i32 786433, null, null, metadata !"", i32 0, i64 12288, i64 32, i32 0, i32 0, metadata !9, metadata !336, i32 0, null, null, null} ; [ DW_TAG_array_type ] [line 0, size 12288, align 32, offset 0] [from int]
+!336 = metadata !{metadata !337, metadata !190}
+!337 = metadata !{i32 786465, i64 0, i64 6}       ; [ DW_TAG_subrange_type ] [0, 5]
+!338 = metadata !{metadata !339, metadata !342, metadata !345, metadata !346, metadata !347, metadata !348, metadata !349, metadata !352, metadata !353, metadata !354, metadata !355, metadata !356, metadata !357, metadata !358, metadata !362, metadata !366, metadata !369, metadata !370, metadata !371, metadata !374, metadata !375, metadata !376, metadata !377, metadata !378, metadata !379, metadata !380, metadata !381, metadata !382, metadata !383, metadata !384, metadata !387, metadata !390, metadata !391, metadata !392, metadata !393, metadata !394, metadata !396, metadata !397, metadata !400, metadata !404, metadata !405, metadata !406, metadata !407, metadata !408, metadata !412, metadata !413, metadata !414, metadata !415, metadata !416, metadata !417, metadata !418, metadata !419, metadata !420, metadata !421, metadata !422, metadata !423, metadata !424, metadata !425, metadata !426, metadata !427, metadata !428, metadata !429, metadata !430, metadata !433, metadata !434, metadata !435, metadata !436, metadata !437, metadata !438}
+!339 = metadata !{i32 786484, i32 0, metadata !4, metadata !"zigzag_index", metadata !"zigzag_index", metadata !"", metadata !5, i32 79, metadata !340, i32 1, i32 1, [64 x i32]* @IZigzagMatrix_f2r_forBody_s2e_forEnd.zigzag_index, null} ; [ DW_TAG_variable ] [zigzag_index] [line 79] [local] [def]
+!340 = metadata !{i32 786433, null, null, metadata !"", i32 0, i64 2048, i64 32, i32 0, i32 0, metadata !341, metadata !251, i32 0, null, null, null} ; [ DW_TAG_array_type ] [line 0, size 2048, align 32, offset 0] [from ]
+!341 = metadata !{i32 786470, null, null, metadata !"", i32 0, i64 0, i64 0, i64 0, i32 0, metadata !9} ; [ DW_TAG_const_type ] [line 0, size 0, align 0, offset 0] [from int]
+!342 = metadata !{i32 786484, i32 0, null, metadata !"p_jinfo_data_precision", metadata !"p_jinfo_data_precision", metadata !"", metadata !343, i32 70, metadata !253, i32 0, i32 1, i8* @p_jinfo_data_precision, null} ; [ DW_TAG_variable ] [p_jinfo_data_precision] [line 70] [def]
+!343 = metadata !{i32 786473, metadata !344}      ; [ DW_TAG_file_type ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/./decode.h]
+!344 = metadata !{metadata !"./decode.h", metadata !"/home/giorgio/ALADDIN/SHOC/jpeg/REG_5"}
+!345 = metadata !{i32 786484, i32 0, null, metadata !"p_jinfo_image_height", metadata !"p_jinfo_image_height", metadata !"", metadata !343, i32 71, metadata !111, i32 0, i32 1, i16* @p_jinfo_image_height, null} ; [ DW_TAG_variable ] [p_jinfo_image_height] [line 71] [def]
+!346 = metadata !{i32 786484, i32 0, null, metadata !"p_jinfo_image_width", metadata !"p_jinfo_image_width", metadata !"", metadata !343, i32 72, metadata !111, i32 0, i32 1, i16* @p_jinfo_image_width, null} ; [ DW_TAG_variable ] [p_jinfo_image_width] [line 72] [def]
+!347 = metadata !{i32 786484, i32 0, null, metadata !"p_jinfo_num_components", metadata !"p_jinfo_num_components", metadata !"", metadata !343, i32 73, metadata !253, i32 0, i32 1, i8* @p_jinfo_num_components, null} ; [ DW_TAG_variable ] [p_jinfo_num_components] [line 73] [def]
+!348 = metadata !{i32 786484, i32 0, null, metadata !"p_jinfo_smp_fact", metadata !"p_jinfo_smp_fact", metadata !"", metadata !343, i32 74, metadata !9, i32 0, i32 1, i32* @p_jinfo_smp_fact, null} ; [ DW_TAG_variable ] [p_jinfo_smp_fact] [line 74] [def]
+!349 = metadata !{i32 786484, i32 0, null, metadata !"p_jinfo_comps_info_index", metadata !"p_jinfo_comps_info_index", metadata !"", metadata !343, i32 76, metadata !350, i32 0, i32 1, [3 x i8]* @p_jinfo_comps_info_index, null} ; [ DW_TAG_variable ] [p_jinfo_comps_info_index] [line 76] [def]
+!350 = metadata !{i32 786433, null, null, metadata !"", i32 0, i64 24, i64 8, i32 0, i32 0, metadata !253, metadata !351, i32 0, null, null, null} ; [ DW_TAG_array_type ] [line 0, size 24, align 8, offset 0] [from char]
+!351 = metadata !{metadata !189}
+!352 = metadata !{i32 786484, i32 0, null, metadata !"p_jinfo_comps_info_id", metadata !"p_jinfo_comps_info_id", metadata !"", metadata !343, i32 77, metadata !350, i32 0, i32 1, [3 x i8]* @p_jinfo_comps_info_id, null} ; [ DW_TAG_variable ] [p_jinfo_comps_info_id] [line 77] [def]
+!353 = metadata !{i32 786484, i32 0, null, metadata !"p_jinfo_comps_info_h_samp_factor", metadata !"p_jinfo_comps_info_h_samp_factor", metadata !"", metadata !343, i32 78, metadata !350, i32 0, i32 1, [3 x i8]* @p_jinfo_comps_info_h_samp_factor, null} ; [ DW_TAG_variable ] [p_jinfo_comps_info_h_samp_factor] [line 78] [def]
+!354 = metadata !{i32 786484, i32 0, null, metadata !"p_jinfo_comps_info_v_samp_factor", metadata !"p_jinfo_comps_info_v_samp_factor", metadata !"", metadata !343, i32 79, metadata !350, i32 0, i32 1, [3 x i8]* @p_jinfo_comps_info_v_samp_factor, null} ; [ DW_TAG_variable ] [p_jinfo_comps_info_v_samp_factor] [line 79] [def]
+!355 = metadata !{i32 786484, i32 0, null, metadata !"p_jinfo_comps_info_quant_tbl_no", metadata !"p_jinfo_comps_info_quant_tbl_no", metadata !"", metadata !343, i32 80, metadata !350, i32 0, i32 1, [3 x i8]* @p_jinfo_comps_info_quant_tbl_no, null} ; [ DW_TAG_variable ] [p_jinfo_comps_info_quant_tbl_no] [line 80] [def]
+!356 = metadata !{i32 786484, i32 0, null, metadata !"p_jinfo_comps_info_dc_tbl_no", metadata !"p_jinfo_comps_info_dc_tbl_no", metadata !"", metadata !343, i32 81, metadata !350, i32 0, i32 1, [3 x i8]* @p_jinfo_comps_info_dc_tbl_no, null} ; [ DW_TAG_variable ] [p_jinfo_comps_info_dc_tbl_no] [line 81] [def]
+!357 = metadata !{i32 786484, i32 0, null, metadata !"p_jinfo_comps_info_ac_tbl_no", metadata !"p_jinfo_comps_info_ac_tbl_no", metadata !"", metadata !343, i32 82, metadata !350, i32 0, i32 1, [3 x i8]* @p_jinfo_comps_info_ac_tbl_no, null} ; [ DW_TAG_variable ] [p_jinfo_comps_info_ac_tbl_no] [line 82] [def]
+!358 = metadata !{i32 786484, i32 0, null, metadata !"p_jinfo_quant_tbl_quantval", metadata !"p_jinfo_quant_tbl_quantval", metadata !"", metadata !343, i32 84, metadata !359, i32 0, i32 1, [4 x [64 x i32]]* @p_jinfo_quant_tbl_quantval, null} ; [ DW_TAG_variable ] [p_jinfo_quant_tbl_quantval] [line 84] [def]
+!359 = metadata !{i32 786433, null, null, metadata !"", i32 0, i64 8192, i64 32, i32 0, i32 0, metadata !22, metadata !360, i32 0, null, null, null} ; [ DW_TAG_array_type ] [line 0, size 8192, align 32, offset 0] [from unsigned int]
+!360 = metadata !{metadata !361, metadata !190}
+!361 = metadata !{i32 786465, i64 0, i64 4}       ; [ DW_TAG_subrange_type ] [0, 3]
+!362 = metadata !{i32 786484, i32 0, null, metadata !"p_jinfo_dc_xhuff_tbl_bits", metadata !"p_jinfo_dc_xhuff_tbl_bits", metadata !"", metadata !343, i32 86, metadata !363, i32 0, i32 1, [2 x [36 x i32]]* @p_jinfo_dc_xhuff_tbl_bits, null} ; [ DW_TAG_variable ] [p_jinfo_dc_xhuff_tbl_bits] [line 86] [def]
+!363 = metadata !{i32 786433, null, null, metadata !"", i32 0, i64 2304, i64 32, i32 0, i32 0, metadata !9, metadata !364, i32 0, null, null, null} ; [ DW_TAG_array_type ] [line 0, size 2304, align 32, offset 0] [from int]
+!364 = metadata !{metadata !365, metadata !261}
+!365 = metadata !{i32 786465, i64 0, i64 2}       ; [ DW_TAG_subrange_type ] [0, 1]
+!366 = metadata !{i32 786484, i32 0, null, metadata !"p_jinfo_dc_xhuff_tbl_huffval", metadata !"p_jinfo_dc_xhuff_tbl_huffval", metadata !"", metadata !343, i32 87, metadata !367, i32 0, i32 1, [2 x [257 x i32]]* @p_jinfo_dc_xhuff_tbl_huffval, null} ; [ DW_TAG_variable ] [p_jinfo_dc_xhuff_tbl_huffval] [line 87] [def]
+!367 = metadata !{i32 786433, null, null, metadata !"", i32 0, i64 16448, i64 32, i32 0, i32 0, metadata !9, metadata !368, i32 0, null, null, null} ; [ DW_TAG_array_type ] [line 0, size 16448, align 32, offset 0] [from int]
+!368 = metadata !{metadata !365, metadata !257}
+!369 = metadata !{i32 786484, i32 0, null, metadata !"p_jinfo_ac_xhuff_tbl_bits", metadata !"p_jinfo_ac_xhuff_tbl_bits", metadata !"", metadata !343, i32 89, metadata !363, i32 0, i32 1, [2 x [36 x i32]]* @p_jinfo_ac_xhuff_tbl_bits, null} ; [ DW_TAG_variable ] [p_jinfo_ac_xhuff_tbl_bits] [line 89] [def]
+!370 = metadata !{i32 786484, i32 0, null, metadata !"p_jinfo_ac_xhuff_tbl_huffval", metadata !"p_jinfo_ac_xhuff_tbl_huffval", metadata !"", metadata !343, i32 90, metadata !367, i32 0, i32 1, [2 x [257 x i32]]* @p_jinfo_ac_xhuff_tbl_huffval, null} ; [ DW_TAG_variable ] [p_jinfo_ac_xhuff_tbl_huffval] [line 90] [def]
+!371 = metadata !{i32 786484, i32 0, null, metadata !"p_jinfo_dc_dhuff_tbl_ml", metadata !"p_jinfo_dc_dhuff_tbl_ml", metadata !"", metadata !343, i32 92, metadata !372, i32 0, i32 1, [2 x i32]* @p_jinfo_dc_dhuff_tbl_ml, null} ; [ DW_TAG_variable ] [p_jinfo_dc_dhuff_tbl_ml] [line 92] [def]
+!372 = metadata !{i32 786433, null, null, metadata !"", i32 0, i64 64, i64 32, i32 0, i32 0, metadata !9, metadata !373, i32 0, null, null, null} ; [ DW_TAG_array_type ] [line 0, size 64, align 32, offset 0] [from int]
+!373 = metadata !{metadata !365}
+!374 = metadata !{i32 786484, i32 0, null, metadata !"p_jinfo_dc_dhuff_tbl_maxcode", metadata !"p_jinfo_dc_dhuff_tbl_maxcode", metadata !"", metadata !343, i32 93, metadata !363, i32 0, i32 1, [2 x [36 x i32]]* @p_jinfo_dc_dhuff_tbl_maxcode, null} ; [ DW_TAG_variable ] [p_jinfo_dc_dhuff_tbl_maxcode] [line 93] [def]
+!375 = metadata !{i32 786484, i32 0, null, metadata !"p_jinfo_dc_dhuff_tbl_mincode", metadata !"p_jinfo_dc_dhuff_tbl_mincode", metadata !"", metadata !343, i32 94, metadata !363, i32 0, i32 1, [2 x [36 x i32]]* @p_jinfo_dc_dhuff_tbl_mincode, null} ; [ DW_TAG_variable ] [p_jinfo_dc_dhuff_tbl_mincode] [line 94] [def]
+!376 = metadata !{i32 786484, i32 0, null, metadata !"p_jinfo_dc_dhuff_tbl_valptr", metadata !"p_jinfo_dc_dhuff_tbl_valptr", metadata !"", metadata !343, i32 95, metadata !363, i32 0, i32 1, [2 x [36 x i32]]* @p_jinfo_dc_dhuff_tbl_valptr, null} ; [ DW_TAG_variable ] [p_jinfo_dc_dhuff_tbl_valptr] [line 95] [def]
+!377 = metadata !{i32 786484, i32 0, null, metadata !"p_jinfo_ac_dhuff_tbl_ml", metadata !"p_jinfo_ac_dhuff_tbl_ml", metadata !"", metadata !343, i32 97, metadata !372, i32 0, i32 1, [2 x i32]* @p_jinfo_ac_dhuff_tbl_ml, null} ; [ DW_TAG_variable ] [p_jinfo_ac_dhuff_tbl_ml] [line 97] [def]
+!378 = metadata !{i32 786484, i32 0, null, metadata !"p_jinfo_ac_dhuff_tbl_maxcode", metadata !"p_jinfo_ac_dhuff_tbl_maxcode", metadata !"", metadata !343, i32 98, metadata !363, i32 0, i32 1, [2 x [36 x i32]]* @p_jinfo_ac_dhuff_tbl_maxcode, null} ; [ DW_TAG_variable ] [p_jinfo_ac_dhuff_tbl_maxcode] [line 98] [def]
+!379 = metadata !{i32 786484, i32 0, null, metadata !"p_jinfo_ac_dhuff_tbl_mincode", metadata !"p_jinfo_ac_dhuff_tbl_mincode", metadata !"", metadata !343, i32 99, metadata !363, i32 0, i32 1, [2 x [36 x i32]]* @p_jinfo_ac_dhuff_tbl_mincode, null} ; [ DW_TAG_variable ] [p_jinfo_ac_dhuff_tbl_mincode] [line 99] [def]
+!380 = metadata !{i32 786484, i32 0, null, metadata !"p_jinfo_ac_dhuff_tbl_valptr", metadata !"p_jinfo_ac_dhuff_tbl_valptr", metadata !"", metadata !343, i32 100, metadata !363, i32 0, i32 1, [2 x [36 x i32]]* @p_jinfo_ac_dhuff_tbl_valptr, null} ; [ DW_TAG_variable ] [p_jinfo_ac_dhuff_tbl_valptr] [line 100] [def]
+!381 = metadata !{i32 786484, i32 0, null, metadata !"p_jinfo_MCUWidth", metadata !"p_jinfo_MCUWidth", metadata !"", metadata !343, i32 102, metadata !9, i32 0, i32 1, i32* @p_jinfo_MCUWidth, null} ; [ DW_TAG_variable ] [p_jinfo_MCUWidth] [line 102] [def]
+!382 = metadata !{i32 786484, i32 0, null, metadata !"p_jinfo_MCUHeight", metadata !"p_jinfo_MCUHeight", metadata !"", metadata !343, i32 103, metadata !9, i32 0, i32 1, i32* @p_jinfo_MCUHeight, null} ; [ DW_TAG_variable ] [p_jinfo_MCUHeight] [line 103] [def]
+!383 = metadata !{i32 786484, i32 0, null, metadata !"p_jinfo_NumMCU", metadata !"p_jinfo_NumMCU", metadata !"", metadata !343, i32 104, metadata !9, i32 0, i32 1, i32* @p_jinfo_NumMCU, null} ; [ DW_TAG_variable ] [p_jinfo_NumMCU] [line 104] [def]
+!384 = metadata !{i32 786484, i32 0, null, metadata !"rgb_buf", metadata !"rgb_buf", metadata !"", metadata !343, i32 106, metadata !385, i32 0, i32 1, [4 x [3 x [64 x i32]]]* @rgb_buf, null} ; [ DW_TAG_variable ] [rgb_buf] [line 106] [def]
+!385 = metadata !{i32 786433, null, null, metadata !"", i32 0, i64 24576, i64 32, i32 0, i32 0, metadata !9, metadata !386, i32 0, null, null, null} ; [ DW_TAG_array_type ] [line 0, size 24576, align 32, offset 0] [from int]
+!386 = metadata !{metadata !361, metadata !189, metadata !190}
+!387 = metadata !{i32 786484, i32 0, null, metadata !"main_result", metadata !"main_result", metadata !"", metadata !388, i32 49, metadata !9, i32 0, i32 1, i32* @main_result, null} ; [ DW_TAG_variable ] [main_result] [line 49] [def]
+!388 = metadata !{i32 786473, metadata !389}      ; [ DW_TAG_file_type ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/./init.h]
+!389 = metadata !{metadata !"./init.h", metadata !"/home/giorgio/ALADDIN/SHOC/jpeg/REG_5"}
+!390 = metadata !{i32 786484, i32 0, null, metadata !"p_jinfo_jpeg_data", metadata !"p_jinfo_jpeg_data", metadata !"", metadata !388, i32 51, metadata !301, i32 0, i32 1, [5310 x i8]* @p_jinfo_jpeg_data, null} ; [ DW_TAG_variable ] [p_jinfo_jpeg_data] [line 51] [def]
+!391 = metadata !{i32 786484, i32 0, null, metadata !"CurHuffReadBuf", metadata !"CurHuffReadBuf", metadata !"", metadata !388, i32 56, metadata !301, i32 0, i32 1, [5310 x i8]* @CurHuffReadBuf, null} ; [ DW_TAG_variable ] [CurHuffReadBuf] [line 56] [def]
+!392 = metadata !{i32 786484, i32 0, null, metadata !"OutData_image_width", metadata !"OutData_image_width", metadata !"", metadata !388, i32 57, metadata !9, i32 0, i32 1, i32* @OutData_image_width, null} ; [ DW_TAG_variable ] [OutData_image_width] [line 57] [def]
+!393 = metadata !{i32 786484, i32 0, null, metadata !"OutData_image_height", metadata !"OutData_image_height", metadata !"", metadata !388, i32 58, metadata !9, i32 0, i32 1, i32* @OutData_image_height, null} ; [ DW_TAG_variable ] [OutData_image_height] [line 58] [def]
+!394 = metadata !{i32 786484, i32 0, null, metadata !"OutData_comp_vpos", metadata !"OutData_comp_vpos", metadata !"", metadata !388, i32 59, metadata !395, i32 0, i32 1, [3 x i32]* @OutData_comp_vpos, null} ; [ DW_TAG_variable ] [OutData_comp_vpos] [line 59] [def]
+!395 = metadata !{i32 786433, null, null, metadata !"", i32 0, i64 96, i64 32, i32 0, i32 0, metadata !9, metadata !351, i32 0, null, null, null} ; [ DW_TAG_array_type ] [line 0, size 96, align 32, offset 0] [from int]
+!396 = metadata !{i32 786484, i32 0, null, metadata !"OutData_comp_hpos", metadata !"OutData_comp_hpos", metadata !"", metadata !388, i32 60, metadata !395, i32 0, i32 1, [3 x i32]* @OutData_comp_hpos, null} ; [ DW_TAG_variable ] [OutData_comp_hpos] [line 60] [def]
+!397 = metadata !{i32 786484, i32 0, null, metadata !"OutData_comp_buf", metadata !"OutData_comp_buf", metadata !"", metadata !388, i32 61, metadata !398, i32 0, i32 1, [3 x [5310 x i8]]* @OutData_comp_buf, null} ; [ DW_TAG_variable ] [OutData_comp_buf] [line 61] [def]
+!398 = metadata !{i32 786433, null, null, metadata !"", i32 0, i64 127440, i64 8, i32 0, i32 0, metadata !58, metadata !399, i32 0, null, null, null} ; [ DW_TAG_array_type ] [line 0, size 127440, align 8, offset 0] [from unsigned char]
+!399 = metadata !{metadata !189, metadata !303}
+!400 = metadata !{i32 786484, i32 0, null, metadata !"hana_jpg", metadata !"hana_jpg", metadata !"", metadata !388, i32 63, metadata !401, i32 0, i32 1, [5207 x i8]* @hana_jpg, null} ; [ DW_TAG_variable ] [hana_jpg] [line 63] [def]
+!401 = metadata !{i32 786433, null, null, metadata !"", i32 0, i64 41656, i64 8, i32 0, i32 0, metadata !58, metadata !402, i32 0, null, null, null} ; [ DW_TAG_array_type ] [line 0, size 41656, align 8, offset 0] [from unsigned char]
+!402 = metadata !{metadata !403}
+!403 = metadata !{i32 786465, i64 0, i64 5207}    ; [ DW_TAG_subrange_type ] [0, 5206]
+!404 = metadata !{i32 786484, i32 0, null, metadata !"hana_bmp", metadata !"hana_bmp", metadata !"", metadata !388, i32 64, metadata !398, i32 0, i32 1, [3 x [5310 x i8]]* @hana_bmp, null} ; [ DW_TAG_variable ] [hana_bmp] [line 64] [def]
+!405 = metadata !{i32 786484, i32 0, null, metadata !"out_width", metadata !"out_width", metadata !"", metadata !388, i32 66, metadata !9, i32 0, i32 1, i32* @out_width, null} ; [ DW_TAG_variable ] [out_width] [line 66] [def]
+!406 = metadata !{i32 786484, i32 0, null, metadata !"out_length", metadata !"out_length", metadata !"", metadata !388, i32 67, metadata !9, i32 0, i32 1, i32* @out_length, null} ; [ DW_TAG_variable ] [out_length] [line 67] [def]
+!407 = metadata !{i32 786484, i32 0, null, metadata !"JpegFileBuf", metadata !"JpegFileBuf", metadata !"", metadata !388, i32 72, metadata !301, i32 0, i32 1, [5310 x i8]* @JpegFileBuf, null} ; [ DW_TAG_variable ] [JpegFileBuf] [line 72] [def]
+!408 = metadata !{i32 786484, i32 0, null, metadata !"out_unread_marker", metadata !"out_unread_marker", metadata !"", metadata !388, i32 1295, metadata !409, i32 0, i32 1, [10 x i32]* @out_unread_marker, null} ; [ DW_TAG_variable ] [out_unread_marker] [line 1295] [def]
+!409 = metadata !{i32 786433, null, null, metadata !"", i32 0, i64 320, i64 32, i32 0, i32 0, metadata !9, metadata !410, i32 0, null, null, null} ; [ DW_TAG_array_type ] [line 0, size 320, align 32, offset 0] [from int]
+!410 = metadata !{metadata !411}
+!411 = metadata !{i32 786465, i64 0, i64 10}      ; [ DW_TAG_subrange_type ] [0, 9]
+!412 = metadata !{i32 786484, i32 0, null, metadata !"i_marker", metadata !"i_marker", metadata !"", metadata !388, i32 1296, metadata !9, i32 0, i32 1, i32* @i_marker, null} ; [ DW_TAG_variable ] [i_marker] [line 1296] [def]
+!413 = metadata !{i32 786484, i32 0, null, metadata !"out_length_get_sof", metadata !"out_length_get_sof", metadata !"", metadata !388, i32 1299, metadata !9, i32 0, i32 1, i32* @out_length_get_sof, null} ; [ DW_TAG_variable ] [out_length_get_sof] [line 1299] [def]
+!414 = metadata !{i32 786484, i32 0, null, metadata !"out_data_precision_get_sof", metadata !"out_data_precision_get_sof", metadata !"", metadata !388, i32 1300, metadata !9, i32 0, i32 1, i32* @out_data_precision_get_sof, null} ; [ DW_TAG_variable ] [out_data_precision_get_sof] [line 1300] [def]
+!415 = metadata !{i32 786484, i32 0, null, metadata !"out_p_jinfo_image_height_get_sof", metadata !"out_p_jinfo_image_height_get_sof", metadata !"", metadata !388, i32 1301, metadata !9, i32 0, i32 1, i32* @out_p_jinfo_image_height_get_sof, null} ; [ DW_TAG_variable ] [out_p_jinfo_image_height_get_sof] [line 1301] [def]
+!416 = metadata !{i32 786484, i32 0, null, metadata !"out_p_jinfo_image_width_get_sof", metadata !"out_p_jinfo_image_width_get_sof", metadata !"", metadata !388, i32 1302, metadata !9, i32 0, i32 1, i32* @out_p_jinfo_image_width_get_sof, null} ; [ DW_TAG_variable ] [out_p_jinfo_image_width_get_sof] [line 1302] [def]
+!417 = metadata !{i32 786484, i32 0, null, metadata !"out_p_jinfo_num_components_get_sof", metadata !"out_p_jinfo_num_components_get_sof", metadata !"", metadata !388, i32 1303, metadata !9, i32 0, i32 1, i32* @out_p_jinfo_num_components_get_sof, null} ; [ DW_TAG_variable ] [out_p_jinfo_num_components_get_sof] [line 1303] [def]
+!418 = metadata !{i32 786484, i32 0, null, metadata !"out_index_get_sof", metadata !"out_index_get_sof", metadata !"", metadata !388, i32 1304, metadata !395, i32 0, i32 1, [3 x i32]* @out_index_get_sof, null} ; [ DW_TAG_variable ] [out_index_get_sof] [line 1304] [def]
+!419 = metadata !{i32 786484, i32 0, null, metadata !"out_id_get_sof", metadata !"out_id_get_sof", metadata !"", metadata !388, i32 1305, metadata !395, i32 0, i32 1, [3 x i32]* @out_id_get_sof, null} ; [ DW_TAG_variable ] [out_id_get_sof] [line 1305] [def]
+!420 = metadata !{i32 786484, i32 0, null, metadata !"out_h_samp_factor_get_sof", metadata !"out_h_samp_factor_get_sof", metadata !"", metadata !388, i32 1306, metadata !395, i32 0, i32 1, [3 x i32]* @out_h_samp_factor_get_sof, null} ; [ DW_TAG_variable ] [out_h_samp_factor_get_sof] [line 1306] [def]
+!421 = metadata !{i32 786484, i32 0, null, metadata !"out_v_samp_factor_get_sof", metadata !"out_v_samp_factor_get_sof", metadata !"", metadata !388, i32 1307, metadata !395, i32 0, i32 1, [3 x i32]* @out_v_samp_factor_get_sof, null} ; [ DW_TAG_variable ] [out_v_samp_factor_get_sof] [line 1307] [def]
+!422 = metadata !{i32 786484, i32 0, null, metadata !"out_quant_tbl_no_get_sof", metadata !"out_quant_tbl_no_get_sof", metadata !"", metadata !388, i32 1308, metadata !395, i32 0, i32 1, [3 x i32]* @out_quant_tbl_no_get_sof, null} ; [ DW_TAG_variable ] [out_quant_tbl_no_get_sof] [line 1308] [def]
+!423 = metadata !{i32 786484, i32 0, null, metadata !"i_get_sos", metadata !"i_get_sos", metadata !"", metadata !388, i32 1311, metadata !9, i32 0, i32 1, i32* @i_get_sos, null} ; [ DW_TAG_variable ] [i_get_sos] [line 1311] [def]
+!424 = metadata !{i32 786484, i32 0, null, metadata !"out_length_get_sos", metadata !"out_length_get_sos", metadata !"", metadata !388, i32 1312, metadata !9, i32 0, i32 1, i32* @out_length_get_sos, null} ; [ DW_TAG_variable ] [out_length_get_sos] [line 1312] [def]
+!425 = metadata !{i32 786484, i32 0, null, metadata !"out_num_comp_get_sos", metadata !"out_num_comp_get_sos", metadata !"", metadata !388, i32 1313, metadata !9, i32 0, i32 1, i32* @out_num_comp_get_sos, null} ; [ DW_TAG_variable ] [out_num_comp_get_sos] [line 1313] [def]
+!426 = metadata !{i32 786484, i32 0, null, metadata !"out_comp_id_get_sos", metadata !"out_comp_id_get_sos", metadata !"", metadata !388, i32 1314, metadata !395, i32 0, i32 1, [3 x i32]* @out_comp_id_get_sos, null} ; [ DW_TAG_variable ] [out_comp_id_get_sos] [line 1314] [def]
+!427 = metadata !{i32 786484, i32 0, null, metadata !"out_dc_tbl_no_get_sos", metadata !"out_dc_tbl_no_get_sos", metadata !"", metadata !388, i32 1315, metadata !395, i32 0, i32 1, [3 x i32]* @out_dc_tbl_no_get_sos, null} ; [ DW_TAG_variable ] [out_dc_tbl_no_get_sos] [line 1315] [def]
+!428 = metadata !{i32 786484, i32 0, null, metadata !"out_ac_tbl_no_get_sos", metadata !"out_ac_tbl_no_get_sos", metadata !"", metadata !388, i32 1316, metadata !395, i32 0, i32 1, [3 x i32]* @out_ac_tbl_no_get_sos, null} ; [ DW_TAG_variable ] [out_ac_tbl_no_get_sos] [line 1316] [def]
+!429 = metadata !{i32 786484, i32 0, null, metadata !"i_get_dht", metadata !"i_get_dht", metadata !"", metadata !388, i32 1319, metadata !9, i32 0, i32 1, i32* @i_get_dht, null} ; [ DW_TAG_variable ] [i_get_dht] [line 1319] [def]
+!430 = metadata !{i32 786484, i32 0, null, metadata !"out_length_get_dht", metadata !"out_length_get_dht", metadata !"", metadata !388, i32 1320, metadata !431, i32 0, i32 1, [4 x i32]* @out_length_get_dht, null} ; [ DW_TAG_variable ] [out_length_get_dht] [line 1320] [def]
+!431 = metadata !{i32 786433, null, null, metadata !"", i32 0, i64 128, i64 32, i32 0, i32 0, metadata !9, metadata !432, i32 0, null, null, null} ; [ DW_TAG_array_type ] [line 0, size 128, align 32, offset 0] [from int]
+!432 = metadata !{metadata !361}
+!433 = metadata !{i32 786484, i32 0, null, metadata !"out_index_get_dht", metadata !"out_index_get_dht", metadata !"", metadata !388, i32 1321, metadata !431, i32 0, i32 1, [4 x i32]* @out_index_get_dht, null} ; [ DW_TAG_variable ] [out_index_get_dht] [line 1321] [def]
+!434 = metadata !{i32 786484, i32 0, null, metadata !"out_count_get_dht", metadata !"out_count_get_dht", metadata !"", metadata !388, i32 1322, metadata !431, i32 0, i32 1, [4 x i32]* @out_count_get_dht, null} ; [ DW_TAG_variable ] [out_count_get_dht] [line 1322] [def]
+!435 = metadata !{i32 786484, i32 0, null, metadata !"i_get_dqt", metadata !"i_get_dqt", metadata !"", metadata !388, i32 1325, metadata !9, i32 0, i32 1, i32* @i_get_dqt, null} ; [ DW_TAG_variable ] [i_get_dqt] [line 1325] [def]
+!436 = metadata !{i32 786484, i32 0, null, metadata !"out_length_get_dqt", metadata !"out_length_get_dqt", metadata !"", metadata !388, i32 1326, metadata !372, i32 0, i32 1, [2 x i32]* @out_length_get_dqt, null} ; [ DW_TAG_variable ] [out_length_get_dqt] [line 1326] [def]
+!437 = metadata !{i32 786484, i32 0, null, metadata !"out_prec_get_dht", metadata !"out_prec_get_dht", metadata !"", metadata !388, i32 1327, metadata !372, i32 0, i32 1, [2 x i32]* @out_prec_get_dht, null} ; [ DW_TAG_variable ] [out_prec_get_dht] [line 1327] [def]
+!438 = metadata !{i32 786484, i32 0, null, metadata !"out_num_get_dht", metadata !"out_num_get_dht", metadata !"", metadata !388, i32 1328, metadata !372, i32 0, i32 1, [2 x i32]* @out_num_get_dht, null} ; [ DW_TAG_variable ] [out_num_get_dht] [line 1328] [def]
+!439 = metadata !{i32 2, metadata !"Dwarf Version", i32 4}
+!440 = metadata !{i32 1, metadata !"Debug Info Version", i32 1}
+!441 = metadata !{metadata !"clang version 3.4 (tags/RELEASE_34/final)"}
+!442 = metadata !{i32 77, i32 0, metadata !4, null}
+!443 = metadata !{i32 89, i32 0, metadata !444, null}
+!444 = metadata !{i32 786443, metadata !1, metadata !4, i32 89, i32 0, i32 0} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!445 = metadata !{i32 92, i32 0, metadata !446, null}
+!446 = metadata !{i32 786443, metadata !1, metadata !444, i32 90, i32 0, i32 1} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!447 = metadata !{metadata !448, metadata !448, i64 0}
+!448 = metadata !{metadata !"int", metadata !449, i64 0}
+!449 = metadata !{metadata !"omnipotent char", metadata !450, i64 0}
+!450 = metadata !{metadata !"Simple C/C++ TBAA"}
+!451 = metadata !{i32 95, i32 0, metadata !4, null}
+!452 = metadata !{i32 98, i32 0, metadata !14, null}
+!453 = metadata !{i32 113, i32 0, metadata !14, null}
+!454 = metadata !{i32 121, i32 0, metadata !14, null}
+!455 = metadata !{i32 129, i32 0, metadata !18, null}
+!456 = metadata !{i32 130, i32 0, metadata !457, null}
+!457 = metadata !{i32 786443, metadata !1, metadata !18, i32 130, i32 0, i32 2} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!458 = metadata !{i32 132, i32 0, metadata !459, null}
+!459 = metadata !{i32 786443, metadata !1, metadata !457, i32 131, i32 0, i32 3} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!460 = metadata !{i32 133, i32 0, metadata !459, null}
+!461 = metadata !{i32 135, i32 0, metadata !18, null}
+!462 = metadata !{i32 137, i32 0, metadata !27, null}
+!463 = metadata !{i32 139, i32 0, metadata !27, null}
+!464 = metadata !{i32 145, i32 0, metadata !27, null}
+!465 = metadata !{i32 148, i32 0, metadata !34, null}
+!466 = metadata !{i32 150, i32 0, metadata !34, null}
+!467 = metadata !{i32 158, i32 0, metadata !34, null}
+!468 = metadata !{i32 166, i32 0, metadata !38, null}
+!469 = metadata !{i32 169, i32 0, metadata !470, null}
+!470 = metadata !{i32 786443, metadata !1, metadata !38, i32 169, i32 0, i32 4} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!471 = metadata !{i32 171, i32 0, metadata !472, null}
+!472 = metadata !{i32 786443, metadata !1, metadata !470, i32 170, i32 0, i32 5} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!473 = metadata !{i32 173, i32 0, metadata !38, null}
+!474 = metadata !{i32 180, i32 0, metadata !45, null}
+!475 = metadata !{i32 183, i32 0, metadata !476, null}
+!476 = metadata !{i32 786443, metadata !1, metadata !45, i32 183, i32 0, i32 6} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!477 = metadata !{i32 185, i32 0, metadata !478, null}
+!478 = metadata !{i32 786443, metadata !1, metadata !479, i32 185, i32 0, i32 8} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!479 = metadata !{i32 786443, metadata !1, metadata !476, i32 184, i32 0, i32 7} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!480 = metadata !{i32 187, i32 0, metadata !481, null}
+!481 = metadata !{i32 786443, metadata !1, metadata !478, i32 186, i32 0, i32 9} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!482 = metadata !{i32 188, i32 0, metadata !481, null}
+!483 = metadata !{i32 189, i32 0, metadata !484, null}
+!484 = metadata !{i32 786443, metadata !1, metadata !478, i32 189, i32 0, i32 10} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!485 = metadata !{i32 191, i32 0, metadata !486, null}
+!486 = metadata !{i32 786443, metadata !1, metadata !484, i32 190, i32 0, i32 11} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!487 = metadata !{i32 192, i32 0, metadata !486, null}
+!488 = metadata !{i32 194, i32 0, metadata !45, null}
+!489 = metadata !{i32 197, i32 0, metadata !50, null}
+!490 = metadata !{i32 199, i32 0, metadata !50, null}
+!491 = metadata !{i32 213, i32 0, metadata !50, null}
+!492 = metadata !{i32 215, i32 0, metadata !54, null}
+!493 = metadata !{i32 217, i32 0, metadata !494, null}
+!494 = metadata !{i32 786443, metadata !1, metadata !54, i32 217, i32 0, i32 12} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!495 = metadata !{i32 219, i32 0, metadata !496, null}
+!496 = metadata !{i32 786443, metadata !1, metadata !497, i32 219, i32 0, i32 14} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!497 = metadata !{i32 786443, metadata !1, metadata !494, i32 218, i32 0, i32 13} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!498 = metadata !{i32 221, i32 0, metadata !499, null}
+!499 = metadata !{i32 786443, metadata !1, metadata !496, i32 220, i32 0, i32 15} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!500 = metadata !{metadata !449, metadata !449, i64 0}
+!501 = metadata !{i32 228, i32 0, metadata !54, null}
+!502 = metadata !{i32 230, i32 0, metadata !66, null}
+!503 = metadata !{i32 231, i32 0, metadata !66, null}
+!504 = metadata !{i32 234, i32 0, metadata !81, null}
+!505 = metadata !{i32 236, i32 0, metadata !79, null}
+!506 = metadata !{i32 244, i32 0, metadata !507, null}
+!507 = metadata !{i32 786443, metadata !1, metadata !508, i32 244, i32 0, i32 23} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!508 = metadata !{i32 786443, metadata !1, metadata !509, i32 243, i32 0, i32 22} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!509 = metadata !{i32 786443, metadata !1, metadata !78, i32 242, i32 0, i32 21} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!510 = metadata !{i32 239, i32 0, metadata !78, null}
+!511 = metadata !{i32 242, i32 0, metadata !509, null}
+!512 = metadata !{i32 246, i32 0, metadata !513, null}
+!513 = metadata !{i32 786443, metadata !1, metadata !507, i32 245, i32 0, i32 24} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!514 = metadata !{i32 259, i32 0, metadata !66, null}
+!515 = metadata !{i32 261, i32 0, metadata !83, null}
+!516 = metadata !{i32 262, i32 0, metadata !83, null}
+!517 = metadata !{i32 265, i32 0, metadata !83, null}
+!518 = metadata !{i32 290, i32 0, metadata !83, null}
+!519 = metadata !{i32 293, i32 0, metadata !93, null}
+!520 = metadata !{i32 294, i32 0, metadata !93, null}
+!521 = metadata !{i32 301, i32 0, metadata !107, null}
+!522 = metadata !{i32 303, i32 0, metadata !105, null}
+!523 = metadata !{i32 309, i32 0, metadata !524, null}
+!524 = metadata !{i32 786443, metadata !1, metadata !525, i32 309, i32 0, i32 33} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!525 = metadata !{i32 786443, metadata !1, metadata !526, i32 308, i32 0, i32 32} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!526 = metadata !{i32 786443, metadata !1, metadata !104, i32 307, i32 0, i32 31} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!527 = metadata !{i32 306, i32 0, metadata !104, null}
+!528 = metadata !{i32 307, i32 0, metadata !526, null}
+!529 = metadata !{i32 311, i32 0, metadata !530, null}
+!530 = metadata !{i32 786443, metadata !1, metadata !524, i32 310, i32 0, i32 34} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!531 = metadata !{i32 326, i32 0, metadata !93, null}
+!532 = metadata !{i32 336, i32 0, metadata !108, null}
+!533 = metadata !{i32 337, i32 0, metadata !108, null}
+!534 = metadata !{i32 344, i32 0, metadata !108, null}
+!535 = metadata !{i32 345, i32 0, metadata !108, null}
+!536 = metadata !{i32 350, i32 0, metadata !108, null}
+!537 = metadata !{i32 357, i32 0, metadata !108, null}
+!538 = metadata !{i32 358, i32 0, metadata !108, null}
+!539 = metadata !{i32 360, i32 0, metadata !540, null}
+!540 = metadata !{i32 786443, metadata !1, metadata !108, i32 360, i32 0, i32 37} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!541 = metadata !{i32 362, i32 0, metadata !542, null}
+!542 = metadata !{i32 786443, metadata !1, metadata !540, i32 361, i32 0, i32 38} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!543 = metadata !{i32 363, i32 0, metadata !542, null}
+!544 = metadata !{i32 366, i32 0, metadata !545, null}
+!545 = metadata !{i32 786443, metadata !1, metadata !540, i32 365, i32 0, i32 39} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!546 = metadata !{i32 368, i32 0, metadata !108, null}
+!547 = metadata !{i32 374, i32 0, metadata !122, null}
+!548 = metadata !{i32 375, i32 0, metadata !122, null}
+!549 = metadata !{i32 376, i32 0, metadata !122, null}
+!550 = metadata !{i32 377, i32 0, metadata !122, null}
+!551 = metadata !{i32 383, i32 0, metadata !140, null}
+!552 = metadata !{i32 385, i32 0, metadata !138, null}
+!553 = metadata !{i32 391, i32 0, metadata !554, null}
+!554 = metadata !{i32 786443, metadata !1, metadata !137, i32 391, i32 0, i32 44} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!555 = metadata !{i32 393, i32 0, metadata !556, null}
+!556 = metadata !{i32 786443, metadata !1, metadata !557, i32 393, i32 0, i32 46} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!557 = metadata !{i32 786443, metadata !1, metadata !554, i32 392, i32 0, i32 45} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!558 = metadata !{i32 388, i32 0, metadata !137, null}
+!559 = metadata !{i32 390, i32 0, metadata !137, null}
+!560 = metadata !{i32 395, i32 0, metadata !561, null}
+!561 = metadata !{i32 786443, metadata !1, metadata !556, i32 394, i32 0, i32 47} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!562 = metadata !{i32 415, i32 0, metadata !122, null}
+!563 = metadata !{i32 417, i32 0, metadata !141, null}
+!564 = metadata !{i32 418, i32 0, metadata !141, null}
+!565 = metadata !{i32 419, i32 0, metadata !141, null}
+!566 = metadata !{i32 420, i32 0, metadata !141, null}
+!567 = metadata !{metadata !568, metadata !568, i64 0}
+!568 = metadata !{metadata !"short", metadata !449, i64 0}
+!569 = metadata !{i32 422, i32 0, metadata !141, null}
+!570 = metadata !{i32 424, i32 0, metadata !151, null}
+!571 = metadata !{i32 425, i32 0, metadata !151, null}
+!572 = metadata !{i32 426, i32 0, metadata !151, null}
+!573 = metadata !{i32 427, i32 0, metadata !151, null}
+!574 = metadata !{i32 428, i32 0, metadata !151, null}
+!575 = metadata !{i32 430, i32 0, metadata !151, null}
+!576 = metadata !{i32 432, i32 0, metadata !159, null}
+!577 = metadata !{i32 433, i32 0, metadata !159, null}
+!578 = metadata !{i32 434, i32 0, metadata !159, null}
+!579 = metadata !{i32 435, i32 0, metadata !159, null}
+!580 = metadata !{i32 439, i32 0, metadata !159, null}
+!581 = metadata !{i32 442, i32 0, metadata !167, null}
+!582 = metadata !{i32 443, i32 0, metadata !167, null}
+!583 = metadata !{i32 444, i32 0, metadata !167, null}
+!584 = metadata !{i32 446, i32 0, metadata !167, null}
+!585 = metadata !{i32 448, i32 0, metadata !167, null}
+!586 = metadata !{i32 461, i32 0, metadata !167, null}
+!587 = metadata !{i32 471, i32 0, metadata !167, null}
+!588 = metadata !{i32 483, i32 0, metadata !167, null}
+!589 = metadata !{i32 497, i32 0, metadata !167, null}
+!590 = metadata !{i32 498, i32 0, metadata !167, null}
+!591 = metadata !{i32 501, i32 0, metadata !592, null}
+!592 = metadata !{i32 786443, metadata !1, metadata !167, i32 501, i32 0, i32 50} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!593 = metadata !{i32 503, i32 0, metadata !594, null}
+!594 = metadata !{i32 786443, metadata !1, metadata !592, i32 502, i32 0, i32 51} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!595 = metadata !{i32 504, i32 0, metadata !594, null}
+!596 = metadata !{i32 507, i32 0, metadata !597, null}
+!597 = metadata !{i32 786443, metadata !1, metadata !592, i32 506, i32 0, i32 52} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!598 = metadata !{i32 509, i32 0, metadata !167, null}
+!599 = metadata !{i32 511, i32 0, metadata !183, null}
+!600 = metadata !{i32 512, i32 0, metadata !183, null}
+!601 = metadata !{i32 513, i32 0, metadata !183, null}
+!602 = metadata !{i32 514, i32 0, metadata !183, null}
+!603 = metadata !{i32 515, i32 0, metadata !183, null}
+!604 = metadata !{i32 517, i32 0, metadata !183, null}
+!605 = metadata !{i32 518, i32 0, metadata !183, null}
+!606 = metadata !{i32 519, i32 0, metadata !183, null}
+!607 = metadata !{i32 521, i32 0, metadata !608, null}
+!608 = metadata !{i32 786443, metadata !1, metadata !183, i32 521, i32 0, i32 53} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!609 = metadata !{i32 522, i32 0, metadata !608, null}
+!610 = metadata !{i32 523, i32 0, metadata !611, null}
+!611 = metadata !{i32 786443, metadata !1, metadata !608, i32 523, i32 0, i32 54} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!612 = metadata !{i32 524, i32 0, metadata !611, null}
+!613 = metadata !{i32 526, i32 0, metadata !614, null}
+!614 = metadata !{i32 786443, metadata !1, metadata !183, i32 526, i32 0, i32 55} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!615 = metadata !{i32 527, i32 0, metadata !614, null}
+!616 = metadata !{i32 528, i32 0, metadata !617, null}
+!617 = metadata !{i32 786443, metadata !1, metadata !614, i32 528, i32 0, i32 56} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!618 = metadata !{i32 529, i32 0, metadata !617, null}
+!619 = metadata !{i32 531, i32 0, metadata !620, null}
+!620 = metadata !{i32 786443, metadata !1, metadata !183, i32 531, i32 0, i32 57} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!621 = metadata !{i32 532, i32 0, metadata !620, null}
+!622 = metadata !{i32 533, i32 0, metadata !623, null}
+!623 = metadata !{i32 786443, metadata !1, metadata !620, i32 533, i32 0, i32 58} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!624 = metadata !{i32 534, i32 0, metadata !623, null}
+!625 = metadata !{i32 536, i32 0, metadata !183, null}
+!626 = metadata !{i32 537, i32 0, metadata !183, null}
+!627 = metadata !{i32 538, i32 0, metadata !183, null}
+!628 = metadata !{i32 540, i32 0, metadata !183, null}
+!629 = metadata !{i32 543, i32 0, metadata !204, null}
+!630 = metadata !{i32 544, i32 0, metadata !204, null}
+!631 = metadata !{i32 547, i32 0, metadata !632, null}
+!632 = metadata !{i32 786443, metadata !1, metadata !204, i32 547, i32 0, i32 59} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!633 = metadata !{i32 574, i32 0, metadata !634, null}
+!634 = metadata !{i32 786443, metadata !1, metadata !632, i32 547, i32 0, i32 60} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!635 = metadata !{i32 551, i32 0, metadata !634, null}
+!636 = metadata !{i32 552, i32 0, metadata !634, null}
+!637 = metadata !{i32 553, i32 0, metadata !634, null}
+!638 = metadata !{i32 555, i32 0, metadata !634, null}
+!639 = metadata !{i32 556, i32 0, metadata !634, null}
+!640 = metadata !{i32 557, i32 0, metadata !634, null}
+!641 = metadata !{i32 559, i32 0, metadata !642, null}
+!642 = metadata !{i32 786443, metadata !1, metadata !634, i32 559, i32 0, i32 61} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!643 = metadata !{i32 560, i32 0, metadata !642, null}
+!644 = metadata !{i32 561, i32 0, metadata !645, null}
+!645 = metadata !{i32 786443, metadata !1, metadata !642, i32 561, i32 0, i32 62} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!646 = metadata !{i32 562, i32 0, metadata !645, null}
+!647 = metadata !{i32 564, i32 0, metadata !648, null}
+!648 = metadata !{i32 786443, metadata !1, metadata !634, i32 564, i32 0, i32 63} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!649 = metadata !{i32 565, i32 0, metadata !648, null}
+!650 = metadata !{i32 566, i32 0, metadata !651, null}
+!651 = metadata !{i32 786443, metadata !1, metadata !648, i32 566, i32 0, i32 64} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!652 = metadata !{i32 567, i32 0, metadata !651, null}
+!653 = metadata !{i32 569, i32 0, metadata !654, null}
+!654 = metadata !{i32 786443, metadata !1, metadata !634, i32 569, i32 0, i32 65} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!655 = metadata !{i32 570, i32 0, metadata !654, null}
+!656 = metadata !{i32 571, i32 0, metadata !657, null}
+!657 = metadata !{i32 786443, metadata !1, metadata !654, i32 571, i32 0, i32 66} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!658 = metadata !{i32 572, i32 0, metadata !657, null}
+!659 = metadata !{i32 575, i32 0, metadata !634, null}
+!660 = metadata !{i32 576, i32 0, metadata !634, null}
+!661 = metadata !{i32 579, i32 0, metadata !204, null}
+!662 = metadata !{i32 581, i32 0, metadata !220, null}
+!663 = metadata !{i32 582, i32 0, metadata !220, null}
+!664 = metadata !{i32 583, i32 0, metadata !220, null}
+!665 = metadata !{i32 584, i32 0, metadata !220, null}
+!666 = metadata !{i32 617, i32 0, metadata !220, null}
+!667 = metadata !{i32 623, i32 0, metadata !235, null}
+!668 = metadata !{i32 625, i32 0, metadata !235, null}
+!669 = metadata !{i32 660, i32 0, metadata !235, null}
+!670 = metadata !{i32 667, i32 0, metadata !242, null}
+!671 = metadata !{i32 668, i32 0, metadata !242, null}
+!672 = metadata !{i32 669, i32 0, metadata !242, null}
+!673 = metadata !{i32 673, i32 0, metadata !246, null}
+!674 = metadata !{i32 674, i32 0, metadata !246, null}
+!675 = metadata !{i32 675, i32 0, metadata !246, null}
+!676 = metadata !{i32 676, i32 0, metadata !246, null}
+!677 = metadata !{i32 677, i32 0, metadata !246, null}
+!678 = metadata !{i32 679, i32 0, metadata !246, null}
+!679 = metadata !{i32 682, i32 0, metadata !246, null}
+!680 = metadata !{i32 687, i32 0, metadata !246, null}
+!681 = metadata !{i32 689, i32 0, metadata !246, null}
+!682 = metadata !{i32 691, i32 0, metadata !246, null}
+!683 = metadata !{i32 693, i32 0, metadata !246, null}
+!684 = metadata !{i32 695, i32 0, metadata !246, null}
+!685 = metadata !{i32 697, i32 0, metadata !246, null}
+!686 = metadata !{i32 701, i32 0, metadata !246, null}
+!687 = metadata !{i32 703, i32 0, metadata !283, null}
+!688 = metadata !{i32 704, i32 0, metadata !283, null}
+!689 = metadata !{i32 705, i32 0, metadata !283, null}
+!690 = metadata !{i32 707, i32 0, metadata !290, null}
+!691 = metadata !{i32 708, i32 0, metadata !692, null}
+!692 = metadata !{i32 786443, metadata !1, metadata !290, i32 708, i32 0, i32 67} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!693 = metadata !{i32 710, i32 0, metadata !694, null}
+!694 = metadata !{i32 786443, metadata !1, metadata !692, i32 709, i32 0, i32 68} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!695 = metadata !{i32 713, i32 0, metadata !290, null}
+!696 = metadata !{i32 716, i32 0, metadata !297, null}
+!697 = metadata !{i32 717, i32 0, metadata !297, null}
+!698 = metadata !{i32 718, i32 0, metadata !297, null}
+!699 = metadata !{i32 719, i32 0, metadata !297, null}
+!700 = metadata !{i32 720, i32 0, metadata !297, null}
+!701 = metadata !{i32 721, i32 0, metadata !297, null}
+!702 = metadata !{i32 722, i32 0, metadata !297, null}
+!703 = metadata !{i32 723, i32 0, metadata !297, null}
+!704 = metadata !{i32 724, i32 0, metadata !297, null}
+!705 = metadata !{i32 727, i32 0, metadata !297, null}
+!706 = metadata !{i32 728, i32 0, metadata !297, null}
+!707 = metadata !{i32 729, i32 0, metadata !297, null}
+!708 = metadata !{i32 732, i32 0, metadata !297, null}
+!709 = metadata !{i32 737, i32 0, metadata !710, null}
+!710 = metadata !{i32 786443, metadata !1, metadata !297, i32 737, i32 0, i32 69} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!711 = metadata !{i32 739, i32 0, metadata !712, null}
+!712 = metadata !{i32 786443, metadata !1, metadata !710, i32 738, i32 0, i32 70} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!713 = metadata !{i32 745, i32 0, metadata !297, null}
+!714 = metadata !{i32 746, i32 0, metadata !297, null}
+!715 = metadata !{i32 751, i32 0, metadata !716, null}
+!716 = metadata !{i32 786443, metadata !1, metadata !297, i32 751, i32 0, i32 71} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!717 = metadata !{i32 753, i32 0, metadata !718, null}
+!718 = metadata !{i32 786443, metadata !1, metadata !716, i32 752, i32 0, i32 72} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!719 = metadata !{i32 754, i32 0, metadata !718, null}
+!720 = metadata !{i32 758, i32 0, metadata !721, null}
+!721 = metadata !{i32 786443, metadata !1, metadata !297, i32 758, i32 0, i32 73} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!722 = metadata !{i32 760, i32 0, metadata !723, null}
+!723 = metadata !{i32 786443, metadata !1, metadata !721, i32 759, i32 0, i32 74} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!724 = metadata !{i32 765, i32 0, metadata !723, null}
+!725 = metadata !{i32 776, i32 0, metadata !726, null}
+!726 = metadata !{i32 786443, metadata !1, metadata !723, i32 766, i32 0, i32 75} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!727 = metadata !{i32 768, i32 0, metadata !728, null}
+!728 = metadata !{i32 786443, metadata !1, metadata !726, i32 768, i32 0, i32 76} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!729 = metadata !{i32 770, i32 0, metadata !730, null}
+!730 = metadata !{i32 786443, metadata !1, metadata !728, i32 769, i32 0, i32 77} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!731 = metadata !{i32 780, i32 0, metadata !732, null}
+!732 = metadata !{i32 786443, metadata !1, metadata !726, i32 780, i32 0, i32 78} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!733 = metadata !{i32 782, i32 0, metadata !734, null}
+!734 = metadata !{i32 786443, metadata !1, metadata !732, i32 781, i32 0, i32 79} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!735 = metadata !{i32 786, i32 0, metadata !726, null}
+!736 = metadata !{i32 792, i32 0, metadata !737, null}
+!737 = metadata !{i32 786443, metadata !1, metadata !721, i32 791, i32 0, i32 80} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!738 = metadata !{i32 796, i32 0, metadata !737, null}
+!739 = metadata !{i32 805, i32 0, metadata !740, null}
+!740 = metadata !{i32 786443, metadata !1, metadata !741, i32 804, i32 0, i32 83} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!741 = metadata !{i32 786443, metadata !1, metadata !742, i32 803, i32 0, i32 82} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!742 = metadata !{i32 786443, metadata !1, metadata !737, i32 797, i32 0, i32 81} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!743 = metadata !{i32 811, i32 0, metadata !742, null}
+!744 = metadata !{i32 816, i32 0, metadata !742, null}
+!745 = metadata !{i32 803, i32 0, metadata !741, null}
+!746 = metadata !{i32 4}
+!747 = metadata !{i32 822, i32 0, metadata !742, null}
+!748 = metadata !{i32 829, i32 0, metadata !749, null}
+!749 = metadata !{i32 786443, metadata !1, metadata !742, i32 829, i32 0, i32 84} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!750 = metadata !{i32 831, i32 0, metadata !751, null}
+!751 = metadata !{i32 786443, metadata !1, metadata !749, i32 830, i32 0, i32 85} ; [ DW_TAG_lexical_block ] [/home/giorgio/ALADDIN/SHOC/jpeg/REG_5/decode.c]
+!752 = metadata !{i32 841, i32 0, metadata !742, null}
+!753 = metadata !{i32 844, i32 0, metadata !297, null}

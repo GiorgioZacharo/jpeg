@@ -1,0 +1,11 @@
+partition,complete,y,1024,2,1
+partition,complete,voffs,1024,2,1
+partition,complete,hoffs,1024,2,1
+partition,complete,p_jinfo_image_width,1024,2,1
+partition,complete,p_jinfo_image_height,1024,2,1
+partition,complete,.14,1024,2,1
+partition,complete,.06,1024,2,1
+partition,complete,out_buf,1024,2,1
+unrolling,Write4Blocks_f2r_WriteOneBlockExit121_s2e_WriteOneBlockExit93,reg_3,1
+pipelining,0
+cycle_time,10

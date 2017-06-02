@@ -1,0 +1,4 @@
+partition,complete,mptr.01,1024,2,1
+unrolling,BoundIDctMatrix_f2r_forBody_s2e_forEnd,reg_15,1
+pipelining,0
+cycle_time,10
